@@ -6,12 +6,10 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 
 WORKDIR /usr/src/app
 
-COPY package*.json ./
+COPY --chown=node:node package*.json ./
 RUN npm ci
 
-COPY . .
-
-RUN chown -R node /usr/src/app/node_modules
+COPY --chown=node:node . .
 
 USER node
 
