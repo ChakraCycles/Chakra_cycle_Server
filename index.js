@@ -3,9 +3,9 @@ const app = express();
 import bodyParser from 'body-parser';
 import fs from 'fs';
 import { generatePDF, renderData } from './pdfgenerate.mjs';
-import { config } from 'dotenv';
+import dotenv from 'dotenv';
+dotenv.config();
 
-config();
 
 // Increase payload limit
 app.use(bodyParser.json({ limit: '520mb' }));
