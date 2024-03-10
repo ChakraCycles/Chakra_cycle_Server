@@ -7,11 +7,14 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 # Set working directory
 WORKDIR /usr/src/app
 
-# Change ownership of app directory to node user
+USER root
+
+# Change ownership of app directory to node user - problem
 RUN chown -R node:node /usr/src/app
 
+
 # Create node_modules directory (now with proper permissions)
-RUN mkdir -p node_modules
+# RUN mkdir -p node_modules
 
 # Copy package.json and package-lock.json
 COPY package*.json ./
