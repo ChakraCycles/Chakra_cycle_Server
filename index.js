@@ -46,8 +46,7 @@ app.post('/form1-inputs', async (req, res) => {
         var pdf = await renderData(yourname , yourdob , firstcat , secondcat , thirdcat , marganum , year , marganumber , birth);
         
         res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', `attachment; filename=${yourname}+"Yantra".pdf`);
-
+        res.setHeader('Content-Disposition', `attachment; filename="${yourname}Yantra.pdf"`);
 
         console.log(yourname , yourdob);
         // Send the PDF buffer as the response body
