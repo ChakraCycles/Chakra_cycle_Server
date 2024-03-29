@@ -7,7 +7,7 @@ let html;
 export async function generatePDF(code) {
     const browser = await puppeteer.launch({  
        
-        headless: false,
+        headless: true,
         args: [
             "--disable-setuid-sandbox",
             "--no-sandbox",
