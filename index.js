@@ -2,23 +2,50 @@ import express from 'express';
 const app = express();
 import bodyParser from 'body-parser';
 import fs from 'fs';
-import { generatePDF, renderData } from './pdfgenerate.mjs';
+import {renderYatra , renderData} from './pdfgenerate.mjs';
 import dotenv from 'dotenv';
 dotenv.config();
 
 
 // Increase payload limit
-app.use(bodyParser.json({ limit: '520mb' }));
-app.use(bodyParser.urlencoded({ limit: '520mb', extended: true , parameterLimit: 1000000 }));
+app.use(bodyParser.json({ limit: '5520mb' }));
+app.use(bodyParser.urlencoded({ limit: '5520mb', extended: true , parameterLimit: 10000000 }));
 
 
 app.get("/" , (req,res) => {
     res.send("Server is up and running!");
 })
 
-app.post('/form1-inputs', async (req, res) => {
+app.post('/yantra-inputs', async (req, res) => {
 
     console.log("recieved response");
+    const year = req.body.year;
+    const chakra = req.body.chakra;
+
+    const tableMain = {} , tableMonths = {};
+    Object.keys(req.body).forEach(key => {
+        if(key.startsWith('input')){
+            tableMain[key] = req.body[key];
+        }
+        else if (key.startsWith('month')){
+            tableMonths[key] = req.body[key];
+        }
+    })
+
+    try{
+        var pdf2 = await renderYatra(year , chakra , tableMain , tableMonths)
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="Yantra Calendar.pdf"`);
+  
+        console.log("sending response");
+        res.send(pdf2);
+        } catch (error) {
+          console.error(error);
+        }
+});
+
+
+app.post('/form1-inputs', async (req, res) => {
     const yourname = req.body.yourname;
     const yourdob = req.body.yourdob;
     const firstcat = req.body.firstcat;
