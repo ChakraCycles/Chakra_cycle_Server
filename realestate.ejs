@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3D Revolution Report</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;600;700&display=swap");
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
+        @import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap");
+
+        :root {
+            --theme-colour: #65c2c0;
+            --theme-colour-darker: #00342d;
+
+            --text-colour: #4e4e4e;
+            --text-colour-new: #7b7c7d;
+            --text-color-colored: #fff;
+        }
+
+        body {
+            width: 100%;
+            padding: 0;
+            margin: 0;
+            overflow-x: hidden;
+            font-family: "Montserrat", sans-serif;
+            font-size: 18px;
+            color: var(--text-color-colored);
+        }
+
+        .pageone {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            color: var(--theme-colour-darker);
+        }
+
+        .company-info_new img {
+            max-height: 200px;
+            max-width: 100%;
+        }
+
+        .header {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            background-color: var(--text-color-colored);
+            margin: 0;
+        }
+
+        .company-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .company-info img {
+            height: 280px;
+        }
+
+        .year {
+            font-size: 46px;
+            font-weight: 600;
+            background-color: var(--theme-colour);
+            text-align: center;
+            width: 40%;
+            height: 280px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .listing {
+            width: 70%;
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 20px;
+            font-family: "Poppins", sans-serif;
+        }
+
+        .listing-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .property-details {
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        table {
+            width: 75%;
+            border-collapse: collapse;
+            margin-top: 50px;
+            font-size: 20px;
+            color: var(--text-colour);
+        }
+
+        .footerimage {
+            max-height: 400px;
+            /* Limit maximum height */
+            overflow: hidden;
+            /* Hide overflow */
+        }
+
+        .footer-image {
+            width: 100%;
+            /* Make the image fill the container */
+            height: auto;
+            /* Auto-adjust height while maintaining aspect ratio */
+        }
+
+        th,
+        td {
+            border: 1px solid #727272;
+            padding: 18px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .highlight {
+            background-color: #ededed;
+            font-weight: bold;
+        }
+
+        .imgg {
+            min-height: 700px;
+            min-width: 800px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+            font-size: 45px;
+            font-weight: 700;
+            background-color: var(--theme-colour);
+            min-height: 80px;
+            color: var(--text-color-colored);
+        }
+        .image img{
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="pageone">
+            <div class="header">
+                <div class="company-info">
+                    <a href="https://www.3drevolution.io/"><img
+                            src="https://i.ibb.co/ftFBWJX/A1-Logo-3-D-Marketplace-01-01.webp"
+                            alt="A1-Logo-3-D-Marketplace-01-01" border="0" /></a>
+                </div>
+                <div class="year">
+                    <p>
+                        <%= currentyear %>
+                    </p>
+                </div>
+            </div>
+            <div style="width: 100%;display: flex;justify-content: center;align-items: center; flex-direction: column;">
+                <div class="image">
+                    <a href="https://www.3drevolution.io/">
+                        <img border="0" src="<%= map %>" />
+                    </a>
+                </div>
+                <div class="footer footer-first year center">
+                    <p>
+                        <%= table[0] %>
+                    </p>
+                </div>
+            </div>
+
+            <div class="page-break"></div>
+
+            <div class="pageone">
+                <div class="center">
+                    <p>Property Details</p>
+                </div>
+                <table>
+                    <tbody>
+                        <% for(let i=0; i < 9; i++) { %>
+                            <tr>
+                                <td class="highlight">
+                                    <%= tag[i] %>
+                                </td>
+                                <td>
+                                    <%= table[i] %>
+                                </td>
+                            </tr>
+                            <% } %>
+                    </tbody>
+                </table>
+                <div class="footer footer-second">
+
+                </div>
+
+            </div>
+
+            <div class="page-break"></div>
+
+            <div class="pageone">
+                <div class="center">
+                    <p>Site Plan</p>
+                </div>
+                <div class="footerimage">
+                    <a href="https://www.3drevolution.io/">
+                        <img border="0" src="<%= upload %>" />
+                    </a>
+                </div>
+            
+            </div>
+            <div class="page-break"></div>
+            <div class="pageone">
+
+                <div class="company-info_new">
+                    <a href="https://www.3drevolution.io/"><img
+                            src="https://i.ibb.co/ftFBWJX/A1-Logo-3-D-Marketplace-01-01.webp"
+                            alt="A1-Logo-3-D-Marketplace-01-01" border="0" /></a>
+                </div>
+                <div class="footerimage">
+                    <a href="<%= link %>">
+                        <img border="0" src="<%= link %>" />
+                    </a>
+                </div>
+                <div class="footer footer-last"
+                    style="position: fixed;bottom: 0;width: 100%;background-color: var(--theme-colour);font-size: 20px;font-weight: 500;text-align: center;padding: 20px;height: var(--footer-height);">
+                    <p>
+                        Talk to our team today<br />
+                        020 418 09269<br />
+                        sales@3ddevelopments.co.nz<br />
+                        www.3ddevelopments.co.nz
+                    </p>
+                    <p></p>
+                </div>
+            </div>
+        </div>
+</body>
+
+</html>
