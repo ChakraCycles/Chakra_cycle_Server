@@ -21,7 +21,7 @@ app.post('/yantra-inputs', async (req, res) => {
     const year = req.body.year;
     const chakra = req.body.chakra;
 
-    const tableMain = {}, tableMonths = {};
+    const tableMain = {}, tableMonths = {} , tableTop = {};
     Object.keys(req.body).forEach(key => {
         if (key.startsWith('input')) {
             tableMain[key] = req.body[key];
@@ -29,10 +29,13 @@ app.post('/yantra-inputs', async (req, res) => {
         else if (key.startsWith('month')) {
             tableMonths[key] = req.body[key];
         }
+        else if(key.startsWith('top')){
+            tableTop[key] = req.body[key];
+        }
     })
 
     try {
-        var pdf2 = await renderYatra(year, chakra, tableMain, tableMonths)
+        var pdf2 = await renderYatra(year, chakra, tableMain, tableMonths , tableTop)
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename="Yantra Calendar.pdf"`);
 

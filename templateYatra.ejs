@@ -37,11 +37,14 @@
         }
 
         table {
-        page-break-inside: avoid; /* Prevent table from breaking across pages */
         width: 100%; /* Ensure table fills available width */
         border-collapse: collapse; /* Collapse table borders */
-        margin-top: 20px;
+        margin-top: 5px;
     }
+    .page-break-avoid {
+        page-break-inside: avoid; /* Prevent elements from being split across pages */
+    }
+
 
         th,
         td {
@@ -57,11 +60,15 @@
 
         .highlight {
             background-color: #ccc;
-            /* Highlight color */
+           
         }
 
         .page-break {
             page-break-before: always;
+        }
+        span{
+            font-weight: bold;
+            margin-top: 40px;
         }
     </style>
 </head>
@@ -89,7 +96,7 @@
     <p>This table displays a yantra calendar customized for the chosen Chakra.</p>
     <table>
         <tbody>
-            <% for (let i=1; i <=19; i++) { %>
+            <% for (let i=1; i <=13; i++) { %>
                 <tr class="<%= i < 2 ? 'highlight' : '' %>">
                     <% for (let j=0; j <=4; j++) { %>
                         <% const key='input' + i + '_' + j; %>
@@ -109,27 +116,27 @@
     <div class="page-break"></div>
     <h3>Breakdown</h3>
     <p>Monthly Breakdown of Yantra table for <%= year %>.</p>
-    <% const monthNames=['January', 'February' , 'March' , 'April' , 'May' , 'June' , 'July' , 'August' , 'September'
-        , 'October' , 'November' , 'December' ]; %>
-        <% for (let i=0; i < 12; i++) { %>
-            <h2>
-                <%= monthNames[i] %>
-                    <%= year %>
-            </h2>
+    <% const monthNames=['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']; %>
+    <% for (let i=0; i < 12; i++) { %>
+        <div class="page-break-avoid">
+            <br>
+            <span>
+                <% for (let h=0; h < 3; h++) { %>
+                   <span><%= top[`top${i}_${h}`] || '' %></span>
+                   <span>&nbsp;</span>
+                <% } %>
+            </span>
             <table>
-                <% for (let j=0; j < 6; j++) { %>
-                    <tr class="<%= j < 2 ? 'highlight' : '' %>">
+                <% for (let j=0; j < 5; j++) { %>
+                    <tr class="<%= j < 1 ? 'highlight' : '' %>">
                         <% for (let k=0; k < 8; k++) { %>
-                            <td>
-                                <%= months[`month${i}_${j}`][k] || '' %>
-                            </td>
-                            <% } %>
+                            <td><%= months[`month${i}_${j}`][k] || '' %></td>
+                        <% } %>
                     </tr>
-                    <% } %>
+                <% } %>
             </table>
-            <% } %>
-
-
+        </div>        
+    <% } %>
 
 </body>
 

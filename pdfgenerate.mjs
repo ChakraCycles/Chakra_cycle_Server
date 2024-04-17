@@ -66,18 +66,18 @@ export async function renderData(yourname, yourdob, firstcat, secondcat, thirdca
 }
 
 
-export async function renderYatra(year, chakra, inputmain, months, callback) {
+export async function renderYatra(year, chakra, inputmain, months, top,  callback) {
     const data = {
         year,
         chakra,
         inputmain,
-        months
+        months,
+        top
     };
+
     html = await ejs.renderFile('templateYatra.ejs', data);
-    // console.log(html);
     const response = await generatePDF(html , 'A4');
 
-    // Now, you can send the PDF file as a download
     return response;
 }
 
