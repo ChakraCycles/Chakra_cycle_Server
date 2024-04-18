@@ -129,7 +129,7 @@
             <table>
                 <% for (let j=0; j < 5; j++) { %>
                     <tr class="<%= j < 1 ? 'highlight' : '' %>">
-                        <% for (let k=0; k < 8; k++) { %>
+                        <% for (let k=0; k <= 8; k++) { %>
                             <td><%= months[`month${i}_${j}`][k] || '' %></td>
                         <% } %>
                     </tr>
