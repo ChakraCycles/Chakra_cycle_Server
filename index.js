@@ -20,6 +20,7 @@ app.post('/yantra-inputs', async (req, res) => {
     console.log("recieved response");
     const names = req.body.name;
     const year = req.body.year;
+    const dob = req.body.dob;
     const chakra = req.body.chakra;
 
     const tableMain = {}, tableMonths = {} , tableTop = {};
@@ -36,7 +37,7 @@ app.post('/yantra-inputs', async (req, res) => {
     })
 
     try {
-        var pdf2 = await renderYatra(names, year, chakra, tableMain, tableMonths , tableTop)
+        var pdf2 = await renderYatra(names,dob, year, chakra, tableMain, tableMonths , tableTop)
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename="Yantra Calendar.pdf"`);
 

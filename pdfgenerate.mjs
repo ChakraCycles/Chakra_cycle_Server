@@ -66,10 +66,10 @@ export async function renderData(yourname, yourdob, firstcat, secondcat, thirdca
 }
 
 
-export async function renderYatra(name , year, chakra, inputmain, months, top,  callback) {
+export async function renderYatra(name ,dob, year, chakra, inputmain, months, top,  callback) {
     const data = {
         name , 
-        year,
+        year,dob,
         chakra,
         inputmain,
         months,
