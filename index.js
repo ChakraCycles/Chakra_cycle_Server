@@ -1,9 +1,10 @@
 import express from 'express';
 const app = express();
-import fs from 'fs';
 import bodyParser from 'body-parser';
 import { renderYatra, renderData, renderSitePlan } from './pdfgenerate.mjs';
 import dotenv from 'dotenv';
+import { connectDB } from './db.js'; // Import the connectDB function
+import mongoose from 'mongoose';
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.post('/yantra-inputs', async (req, res) => {
     const tableMain = {}, tableMonths = {} , tableTop = {};
     Object.keys(req.body).forEach(key => {
         if (key.startsWith('input')) {
+            
             tableMain[key] = req.body[key];
         }
         else if (key.startsWith('month')) {
@@ -143,19 +145,94 @@ app.post('/property-feasibility', async (req, res) => {
     }
 
 });
+
+
+// Define a schema
+const formDataSchema = new mongoose.Schema({
+    email: { type: String, required: true },
+    phoneNumber: { type: String, required: true }, // Changed to String
+    borrowerFirstName: { type: String, required: true },
+    borrowerLastName: { type: String, required: true },
+    borrowerDateofBirth: { type: String, required: true },
+    coBorrowerFirstName: { type: String, default: "" },
+    coBorrowerLastName: { type: String, default: "" },
+    coBorrowerDateofBirth: { type: String, default: "" },
+    income: { type: Number, required: true },
+    housingExpense: { type: Number, required: true },
+    members: { type: Number, required: true },
+    debt: { type: Number, required: true },
+    address: { type: String, required: true },
+    city: { type: String, required: true },
+    state: { type: String, required: true },
+    zip: { type: String, required: true }, // Changed to String
+    market: { type: Number, required: true },
+    firstMortgage: { type: Number, required: true },
+    creditEvaluation: { type: [String], required: true }, // Changed to array of strings
+    isThisForPurchase: { type: String, required: true },
+  });
+  
+  // Create a model
+  const FormData = mongoose.model('ReverseFormData', formDataSchema);
+
+  
+
+
+
+
+
+  
+// Route to handle form submission
+app.post('/reverseinputs', async (req, res) => {
+    // Connect to the database
+    connectDB();
+  
+    const formData = new FormData({
+      email: req.body.email,
+      phoneNumber: req.body.phone,
+      borrowerFirstName: req.body.firstName,
+      borrowerLastName: req.body.lastName,
+      borrowerDateofBirth: req.body.dob,
+      coBorrowerFirstName: req.body.cofirstName || "",
+      coBorrowerLastName: req.body.colastName || "",
+      coBorrowerDateofBirth: req.body.codob || "",
+      income: req.body.income,
+      housingExpense: req.body.housingExpenses,
+      members: req.body.householdMembers,
+      debt: req.body.creditDebt,
+      address: req.body.subject_property_address,
+      city: req.body.subject_property_city,
+      state: req.body.subject_property_state,
+      zip: req.body.subject_property_zip,
+      market: req.body.market_value,
+      firstMortgage: req.body.first_mortgage_balance,
+      creditEvaluation: req.body.credit_evaluation,
+      isThisForPurchase: req.body.is_purchase,
+    });
+  
+    try {
+      await formData.save();
+      res.send('Data saved successfully!');
+    } catch (err) {
+      console.error('Error saving data:', err);
+      res.status(500).send('Error saving data.');
+    }
+  });
+  
+
+
+
+
+
+
+
+
+
+
+
+
 // Start the server
 var port = process.env.PORT || 1337;
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
 
-
-    // const nzDate = new Intl.DateTimeFormat('en-NZ', {
-    //     timeZone: 'Pacific/Auckland',
-    //     year: 'numeric',
-    //     month: 'long',
-    //     day: 'numeric',
-    //     hour: 'numeric',
-    //     minute: 'numeric',
-    //     hour12: true
-    //   }).format(new Date());
