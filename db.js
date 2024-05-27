@@ -6,9 +6,6 @@ dotenv.config();
 const connectDB = async () => {
   try {
     // Logging environment variables for debugging
-    console.log('MONGODB_URI:', process.env.MONGODB_URI);
-    console.log('DB_NAME:', process.env.DB_NAME);
-
     const connectionInstance = await mongoose.connect(
       `${process.env.MONGODB_URI}/${process.env.DB_NAME}`, {
         useNewUrlParser: true,

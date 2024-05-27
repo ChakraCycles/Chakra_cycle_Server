@@ -27,7 +27,7 @@ app.post('/yantra-inputs', async (req, res) => {
     const tableMain = {}, tableMonths = {} , tableTop = {};
     Object.keys(req.body).forEach(key => {
         if (key.startsWith('input')) {
-            
+
             tableMain[key] = req.body[key];
         }
         else if (key.startsWith('month')) {
@@ -184,7 +184,9 @@ const formDataSchema = new mongoose.Schema({
 // Route to handle form submission
 app.post('/reverseinputs', async (req, res) => {
     // Connect to the database
-    connectDB();
+    if (mongoose.connection.readyState === 0) {
+        await connectDB();
+    }
   
     const formData = new FormData({
       email: req.body.email,
