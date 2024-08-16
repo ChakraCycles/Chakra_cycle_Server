@@ -74,12 +74,11 @@
 </head>
 
 <body>
-    <h1>YANTRA CALENDAR</h1>
-    <h3>Inputs</h3>
-    <p>Specify an year and your chakra number to generate a personalized Yantra calendar for that particular year.</p>
+    <h1>THE CHAKRA CYCLES</h1>
+    <h1>MONTHLY & DAILY PLANNER</h1>
     <div class="container">
         <div>
-            <span class="data-label">Your Name:</span>
+            <span class="data-label">Name:</span>
             <span class="data-value">
                 <%= name %>
             </span>
@@ -104,8 +103,8 @@
         </div>
     </div>
 
-    <h3>Yantra Table</h3>
-    <p>This table displays a yantra calendar customized for the chosen Chakra.</p>
+    <h3>Monthly Cycles</h3>
+    <p>This table displays your monthly chakra energy. When two numbers are shown for a certain month, the second number represents the incoming year's energy. Please refer back to 'The Overlapping Effect' for more information on this.</p>
     <table>
         <tbody>
             <% for (let i=1; i <=13; i++) { %>
@@ -126,8 +125,8 @@
 
     </table>
     <div class="page-break"></div>
-    <h3>Breakdown</h3>
-    <p>Monthly Breakdown of Yantra table for <%= year %>.</p>
+    <h3>Monthly Cycles</h3>
+    <p>Each table shows dates for the month. The grey row at the top of each table displays the chakra numbers. To find your daily chakra, locate the date and match it with the chakra number directly above it in the grey row. This number represents your chakra energy for that day.</p>
     <% const monthNames=['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']; %>
     <% for (let i=0; i < 12; i++) { %>
         <div class="page-break-avoid">
