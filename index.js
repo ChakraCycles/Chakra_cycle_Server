@@ -41,7 +41,8 @@ app.post('/yantra-inputs', async (req, res) => {
     try {
         var pdf2 = await renderYatra(names,dob, year, chakra, tableMain, tableMonths , tableTop)
         res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', `attachment; filename="${names} monthly_and_daily_planner.pdf"`);
+        console.log(names);
+        res.setHeader('Content-Disposition', `attachment; filename="${names} Monthly & Daily Planner.pdf"`);
 
         console.log("sending response");
         res.send(pdf2);
@@ -79,7 +80,7 @@ app.post('/form1-inputs', async (req, res) => {
         var pdf = await renderData(yourname, yourdob, firstcat, secondcat, thirdcat, marganum, year, marganumber, birth);
 
         res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', `attachment; filename="${yourname} Yearly planner.pdf"`);
+        res.setHeader('Content-Disposition', `attachment; filename="${yourname} Yearly Planner.pdf"`);
 
         console.log(yourname, yourdob);
         // Send the PDF buffer as the response body
