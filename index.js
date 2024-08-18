@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
 app.post('/yantra-inputs', async (req, res) => {
 
     console.log("recieved response");
-    const names = req.body.name;
+    const names = req.body.person_name;
     const year = req.body.year;
     const dob = req.body.dob;
     const chakra = req.body.chakra;
