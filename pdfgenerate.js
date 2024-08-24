@@ -1,11 +1,11 @@
-import puppeteer from 'puppeteer';
-import ejs from 'ejs';
-import fs from 'fs';
-import dotenv from 'dotenv';
-dotenv.config();
+const puppeteer = require('puppeteer');
+const ejs = require('ejs');
+const fs = require('fs');
+const dotenv = require('dotenv');
+dotenv.config(); 
 
 let html;
-export async function generatePDF(code , papersize) {
+ async function generatePDF(code , papersize) {
     const browser = await puppeteer.launch({
 
         headless: true,
@@ -47,7 +47,7 @@ export async function generatePDF(code , papersize) {
     }
 }
 
-export async function renderData(yourname, yourdob, firstcat, secondcat, thirdcat, marganum, year, marganumber, birth, callback) {
+async function renderData(yourname, yourdob, firstcat, secondcat, thirdcat, marganum, year, marganumber, birth, callback) {
     const data = {
         yourname,
         yourdob,
@@ -66,7 +66,7 @@ export async function renderData(yourname, yourdob, firstcat, secondcat, thirdca
 }
 
 
-export async function renderYatra(name ,dob, year, chakra, inputmain, months, top,  callback) {
+async function renderYatra(name ,dob, year, chakra, inputmain, months, top,  callback) {
     const data = {
         name , 
         year,dob,
@@ -82,7 +82,7 @@ export async function renderYatra(name ,dob, year, chakra, inputmain, months, to
     return response;
 }
 
-export async function renderSitePlan( upload , map, currentyear, table, tag, link, callback) {
+ async function renderSitePlan( upload , map, currentyear, table, tag, link, callback) {
 
     // const imageUploaded = uploadedPlan;
 
@@ -100,5 +100,6 @@ export async function renderSitePlan( upload , map, currentyear, table, tag, lin
 }
 
 
-export default { renderYatra, renderData, renderSitePlan };
+module.exports =
+ { renderYatra, renderData, renderSitePlan };
 
