@@ -5,7 +5,9 @@ const { renderYatra, renderData, renderSitePlan } = require('./pdfgenerate');
 const dotenv = require('dotenv');
 const { connectDB } = require('./db');
 const mongoose = require('mongoose');
-const { calculateNumber } = require('./dharma-number');
+const { calculateNumber } = require('./MailerLiteStuff/dharma-number');
+const { getChakraInfo } = require('./MailerLiteStuff/chakraUtils');
+
 const axios = require('axios');
 const MailerLite = require('@mailerlite/mailerlite-nodejs').default;
 
@@ -106,7 +108,7 @@ const mailerlite = new MailerLite({
 app.post('/process-email-data', async (req, res) => {
     
     console.log("email triggerd");
-    const { name, email, dob } = req.body;
+    const { name, email, dob } = req?.body;
 
 
 
@@ -118,7 +120,10 @@ app.post('/process-email-data', async (req, res) => {
     try {
         // Process the data to get the marga_number
         const margaNumber = await calculateNumber(dob);
-        console.log(`Calculated Marga Number: ${margaNumber}`);
+        
+       
+            const chakraInfo = getChakraInfo(margaNumber?.roots);
+           console.log("chakra info",chakraInfo);
 
         const params = {
             filter: {
@@ -129,11 +134,12 @@ app.post('/process-email-data', async (req, res) => {
 
         // Fetch subscribers
         const response = await mailerlite.subscribers.get(params);
-        const allSubscribers = response.data.data;
+        const allSubscribers = response?.data?.data;
 
          // Find the subscriber with the given email
-        const target_subscriber = allSubscribers.find(sub => sub.email === email);
+        const target_subscriber = allSubscribers.find(sub => sub?.email === email);
 
+        console.log("target subscriber:",target_subscriber);
         if (!target_subscriber) {
             return res.status(404).json({ error: 'Subscriber not found' });
         }
@@ -141,9 +147,22 @@ app.post('/process-email-data', async (req, res) => {
         // Prepare update parameters
         const updateParams = {
             fields: {
-                marganumber: margaNumber
+                marganumber: margaNumber?.margaNumber,
+
+                first_chakra: margaNumber.roots[0],
+                chakra_title_0_27: chakraInfo[0]?.title,
+                chakra_description_0_27: chakraInfo[0]?.description,
+                
+                second_chakra: margaNumber.roots[1],
+                chakra_title_27_54: chakraInfo[1]?.title,
+                chakra_description_27_54: chakraInfo[1]?.description,
+               
+                third_chakra: margaNumber.roots[2],
+                chakra_title_54_81: chakraInfo[2]?.title,
+                chakra_description_54_81: chakraInfo[2]?.description,
+               
             },
-            status: "active" // Ensure the subscriber's status is correct
+            status: "active" 
         };
 
         // Update subscriber using their ID
@@ -166,11 +185,6 @@ app.post('/process-email-data', async (req, res) => {
         return res.status(500).json({ error: 'Internal Server Error' });
     }
 });
-
-
-
-
-
 
 
 

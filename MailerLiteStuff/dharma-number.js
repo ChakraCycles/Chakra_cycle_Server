@@ -33,11 +33,17 @@ async function calculateNumber(dob) {
     const second = calculateDigitalRoot(day);
     const third = calculateDigitalRoot(year);
 
+    // document.getElementById("firstcat").value = first;
+    // document.getElementById("secondcat").value = second;
+    // document.getElementById("thirdcat").value = third;
+
+    var roots = [first , second , third];
     // Calculate Marga number
     const margaNumber = await calculateMarga(Number(first), Number(second), Number(third));
     console.log("Marga Number:", margaNumber);
+    console.log("roots",roots);
     // Return the calculated values
-    return margaNumber;
+    return {roots , margaNumber};
 }
 
 // Export the functions
