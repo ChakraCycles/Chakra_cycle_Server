@@ -104,13 +104,21 @@ const mailerlite = new MailerLite({
     api_key: process.env.MAILER_LITE_API_KEY
 });
 
-
 app.post('/process-email-data', async (req, res) => {
-    
-    console.log("email triggerd");
+    console.log("Email triggered");
     const { name, email, dob } = req?.body;
-
-
+console.log(name , email , dob)
+    const chakraPages = [
+        'https://preview.mailerlite.io/preview/1013434/sites/127513496820647146/Marga-Dharma-1-Muladhara',
+        'https://preview.mailerlite.io/preview/1013434/sites/127546662444861189/MGMwz6',
+        'https://preview.mailerlite.io/preview/1013434/sites/127546667145626898/S1vH5w',
+        'https://preview.mailerlite.io/preview/1013434/sites/127546671023261366/fxXZxs',
+        'https://preview.mailerlite.io/preview/1013434/sites/127546675534234852/6dcfHp',
+        'https://preview.mailerlite.io/preview/1013434/sites/127546742155511776/RTu7h1',
+        'https://preview.mailerlite.io/preview/1013434/sites/127546764145198084/LWvbwz',
+        'https://preview.mailerlite.io/preview/1013434/sites/127546767517418836/DLFiz6',
+        'https://preview.mailerlite.io/preview/1013434/sites/127546770620155592/1i6t35'
+    ];
 
     // Validate input
     if (!name?.length || !dob?.length || !email?.length) {
@@ -120,10 +128,19 @@ app.post('/process-email-data', async (req, res) => {
     try {
         // Process the data to get the marga_number
         const margaNumber = await calculateNumber(dob);
-        
-       
-            const chakraInfo = getChakraInfo(margaNumber?.roots);
-           console.log("chakra info",chakraInfo);
+        if (!margaNumber || !margaNumber.margaNumber) {
+            console.error('Error: margaNumber is undefined or invalid:', margaNumber);
+            return res.status(500).json({ error: 'Failed to calculate marga number' });
+        }
+
+        // Get chakra info
+        const chakraInfo = getChakraInfo(margaNumber?.roots);
+        if (!chakraInfo || !Array.isArray(chakraInfo) || chakraInfo.length < 3) {
+            console.error('Error: chakraInfo is invalid:', chakraInfo);
+            return res.status(500).json({ error: 'Failed to get chakra information' });
+        }
+
+        console.log("Chakra info:", chakraInfo);
 
         const params = {
             filter: {
@@ -136,13 +153,29 @@ app.post('/process-email-data', async (req, res) => {
         const response = await mailerlite.subscribers.get(params);
         const allSubscribers = response?.data?.data;
 
-         // Find the subscriber with the given email
+        // Check if API response is valid
+        if (!allSubscribers || !Array.isArray(allSubscribers)) {
+            console.error('Error: Invalid MailerLite response:', response);
+            return res.status(500).json({ error: 'Failed to fetch subscribers' });
+        }
+
+        // Find the subscriber with the given email
         const target_subscriber = allSubscribers.find(sub => sub?.email === email);
 
-        console.log("target subscriber:",target_subscriber);
+        console.log("Target subscriber:", target_subscriber);
         if (!target_subscriber) {
             return res.status(404).json({ error: 'Subscriber not found' });
         }
+
+        // Select the correct website link based on the margaNumber
+        const margaIndex = Number(margaNumber.margaNumber) - 1;
+        const website = chakraPages[margaIndex];
+        if (!website) {
+            console.error('Error: Invalid marga number index:', margaIndex);
+            return res.status(500).json({ error: 'Invalid Marga number for website link' });
+        }
+
+        console.log("Website link:", website, "Email landing link:", `<a href="${website}" target="_blank">Landing Page Link</a>`);
 
         // Prepare update parameters
         const updateParams = {
@@ -152,28 +185,37 @@ app.post('/process-email-data', async (req, res) => {
                 first_chakra: margaNumber.roots[0],
                 chakra_title_0_27: chakraInfo[0]?.title,
                 chakra_description_0_27: chakraInfo[0]?.description,
-                
+                chakra_image_0_27:chakraInfo[0]?.image,
+
                 second_chakra: margaNumber.roots[1],
                 chakra_title_27_54: chakraInfo[1]?.title,
                 chakra_description_27_54: chakraInfo[1]?.description,
-               
+                chakra_image_27_54:chakraInfo[1]?.image,
+
                 third_chakra: margaNumber.roots[2],
                 chakra_title_54_81: chakraInfo[2]?.title,
                 chakra_description_54_81: chakraInfo[2]?.description,
-               
+                chakra_image_54_81:chakraInfo[2]?.image,
+                
+                email1_landing_link:website
             },
-            status: "active" 
+            status: "active"
         };
 
         // Update subscriber using their ID
         const updateResponse = await mailerlite.subscribers.update(target_subscriber.id, updateParams);
 
-        // Extract and log only relevant data from the response
+
+        if (!updateResponse || !updateResponse.data || !updateResponse.data.data) {
+            console.error('Error: Failed to update subscriber:', updateResponse);
+            return res.status(500).json({ error: 'Failed to update subscriber' });
+        }
+
         const updatedData = {
-            id: updateResponse?.data?.data?.id,
-            email: updateResponse?.data?.data?.email,
-            status: updateResponse?.data?.data?.status,
-            fields: updateResponse?.data?.data?.fields
+            id: updateResponse.data.data.id,
+            email: updateResponse.data.data.email,
+            status: updateResponse.data.data.status,
+            fields: updateResponse.data.data.fields
         };
 
         console.log('Subscriber updated:', updatedData);
