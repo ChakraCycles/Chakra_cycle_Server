@@ -107,15 +107,30 @@ const mailerlite = new MailerLite({
 app.post('/process-email-data', async (req, res) => {
   
     console.log("Email triggered");
-    
-    // Accessing the data correctly from fields
-    const { fields } = req.body;
-    const name = fields?.name;
-    const email = req.body?.email; // Assuming email is directly under req.body
-    const dob = fields?.date_of_birth;
+    const events = req?.body?.events;
 
-    console.log(name, email, dob, req.body);
-    
+    if (!Array.isArray(events)) {
+        return res.status(400).json({ error: 'Invalid data format' });
+    }
+
+    // Iterate over each event in the events array
+    events.forEach(event => {
+        if (event?.fields) {
+            const name = event.fields.name;
+            const email = event.email; // Email is directly in event
+            const dob = event.fields.date_of_birth;
+
+            console.log(name, email, dob);
+            
+            // Validate input
+            if (!name || !dob || !email) {
+                console.error('Missing name, date of birth, or email');
+                return;
+            }
+        }
+    });
+
+
 
     const chakraPages = [
         'https://preview.mailerlite.io/preview/1013434/sites/127513496820647146/Marga-Dharma-1-Muladhara',
