@@ -116,17 +116,11 @@ app.post('/process-email-data', async (req, res) => {
     // Iterate over each event in the events array
     events.forEach(event => {
         if (event?.fields) {
-            const name = event.fields.name;
+            const name = event.fields.first_name;
             const email = event.email; // Email is directly in event
             const dob = event.fields.date_of_birth;
 
             console.log(name, email, dob);
-            
-            // Validate input
-            if (!name || !dob || !email) {
-                console.error('Missing name, date of birth, or email');
-                return;
-            }
         }
     });
 
