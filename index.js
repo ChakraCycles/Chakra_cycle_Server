@@ -138,11 +138,6 @@ app.post('/process-email-data', async (req, res) => {
         'https://preview.mailerlite.io/preview/1013434/sites/127546770620155592/1i6t35'
     ];
 
-    // Validate input
-    if (!name?.length || !dob?.length || !email?.length) {
-        return res.status(400).json({ error: 'Name, date of birth, and email are required' });
-    }
-
     try {
         // Process the data to get the marga_number
         const margaNumber = await calculateNumber(dob);
