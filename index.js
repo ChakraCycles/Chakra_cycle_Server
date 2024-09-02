@@ -106,8 +106,10 @@ const mailerlite = new MailerLite({
 
 app.post('/process-email-data', async (req, res) => {
     console.log("Email triggered");
+    console.log("Headers:", req?.headers); // Log headers
     const { name, email, dob } = req?.body;
-console.log(name , email , dob)
+    console.log("Received data:", name, email, dob, req?.body);
+
     const chakraPages = [
         'https://preview.mailerlite.io/preview/1013434/sites/127513496820647146/Marga-Dharma-1-Muladhara',
         'https://preview.mailerlite.io/preview/1013434/sites/127546662444861189/MGMwz6',
