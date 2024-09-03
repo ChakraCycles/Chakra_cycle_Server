@@ -104,8 +104,8 @@ const mailerlite = new MailerLite({
     api_key: process.env.MAILER_LITE_API_KEY
 });
 
+
 app.post('/process-email-data', async (req, res) => {
-  
     console.log("Email triggered");
     const events = req?.body?.events;
 
@@ -113,18 +113,23 @@ app.post('/process-email-data', async (req, res) => {
         return res.status(400).json({ error: 'Invalid data format' });
     }
 
+    let name, email, dob;
+
     // Iterate over each event in the events array
     events.forEach(event => {
         if (event?.fields) {
-            const name = event.fields.first_name;
-            const email = event.email; // Email is directly in event
-            const dob = event.fields.date_of_birth;
+            name = event.fields.first_name;
+            email = event.email; // Email is directly in event
+            dob = event.fields.date_of_birth;
 
             console.log(name, email, dob);
         }
     });
 
-
+    // Check if the required variables are defined
+    if (!email || !dob) {
+        return res.status(400).json({ error: 'Missing email or date of birth' });
+    }
 
     const chakraPages = [
         'https://preview.mailerlite.io/preview/1013434/sites/127513496820647146/Marga-Dharma-1-Muladhara',
@@ -198,26 +203,25 @@ app.post('/process-email-data', async (req, res) => {
                 first_chakra: margaNumber.roots[0],
                 chakra_title_0_27: chakraInfo[0]?.title,
                 chakra_description_0_27: chakraInfo[0]?.description,
-                chakra_image_0_27:chakraInfo[0]?.image,
+                chakra_image_0_27: chakraInfo[0]?.image,
 
                 second_chakra: margaNumber.roots[1],
                 chakra_title_27_54: chakraInfo[1]?.title,
                 chakra_description_27_54: chakraInfo[1]?.description,
-                chakra_image_27_54:chakraInfo[1]?.image,
+                chakra_image_27_54: chakraInfo[1]?.image,
 
                 third_chakra: margaNumber.roots[2],
                 chakra_title_54_81: chakraInfo[2]?.title,
                 chakra_description_54_81: chakraInfo[2]?.description,
-                chakra_image_54_81:chakraInfo[2]?.image,
-                
-                email1_landing_link:website
+                chakra_image_54_81: chakraInfo[2]?.image,
+
+                email1_landing_link: website
             },
             status: "active"
         };
 
         // Update subscriber using their ID
         const updateResponse = await mailerlite.subscribers.update(target_subscriber.id, updateParams);
-
 
         if (!updateResponse || !updateResponse.data || !updateResponse.data.data) {
             console.error('Error: Failed to update subscriber:', updateResponse);
@@ -240,6 +244,7 @@ app.post('/process-email-data', async (req, res) => {
         return res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
 
 
 
