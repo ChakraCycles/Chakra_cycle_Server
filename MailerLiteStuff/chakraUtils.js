@@ -16,11 +16,13 @@ function getChakraInfo(roots) {
 
         const title = chakraInfo.title;
         const description = chakraInfo.descriptions[ageRange];
+        const image = chakraInfo.image;
 
         result.push({
             ageRange,
             title,
-            description
+            description,
+            image
         });
     });
 

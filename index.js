@@ -118,7 +118,7 @@ app.post('/process-email-data', async (req, res) => {
     // Iterate over each event in the events array
     events.forEach(event => {
         if (event?.fields) {
-            name = event.fields.first_name;
+            name = event.fields.name;
             email = event.email; // Email is directly in event
             dob = event.fields.date_of_birth;
 
@@ -132,15 +132,15 @@ app.post('/process-email-data', async (req, res) => {
     }
 
     const chakraPages = [
-        'https://preview.mailerlite.io/preview/1013434/sites/127513496820647146/Marga-Dharma-1-Muladhara',
-        'https://preview.mailerlite.io/preview/1013434/sites/127546662444861189/MGMwz6',
-        'https://preview.mailerlite.io/preview/1013434/sites/127546667145626898/S1vH5w',
-        'https://preview.mailerlite.io/preview/1013434/sites/127546671023261366/fxXZxs',
-        'https://preview.mailerlite.io/preview/1013434/sites/127546675534234852/6dcfHp',
-        'https://preview.mailerlite.io/preview/1013434/sites/127546742155511776/RTu7h1',
-        'https://preview.mailerlite.io/preview/1013434/sites/127546764145198084/LWvbwz',
-        'https://preview.mailerlite.io/preview/1013434/sites/127546767517418836/DLFiz6',
-        'https://preview.mailerlite.io/preview/1013434/sites/127546770620155592/1i6t35'
+        'subscribepage.io/Marga-Dharma-1-Muladhara',
+        'subscribepage.io/MGMwz6',
+        'subscribepage.io/S1vH5w',
+        'subscribepage.io/fxXZxs',
+        'subscribepage.io/6dcfHp',
+        'subscribepage.io/RTu7h1',
+        'subscribepage.io/LWvbwz',
+        'subscribepage.io/DLFiz6',
+        'subscribepage.io/1i6t35'
     ];
 
     try {
@@ -157,8 +157,6 @@ app.post('/process-email-data', async (req, res) => {
             console.error('Error: chakraInfo is invalid:', chakraInfo);
             return res.status(500).json({ error: 'Failed to get chakra information' });
         }
-
-        console.log("Chakra info:", chakraInfo);
 
         const params = {
             filter: {
@@ -180,8 +178,7 @@ app.post('/process-email-data', async (req, res) => {
         // Find the subscriber with the given email
         const target_subscriber = allSubscribers.find(sub => sub?.email === email);
 
-        console.log("Target subscriber:", target_subscriber);
-        if (!target_subscriber) {
+          if (!target_subscriber) {
             return res.status(404).json({ error: 'Subscriber not found' });
         }
 
@@ -192,8 +189,6 @@ app.post('/process-email-data', async (req, res) => {
             console.error('Error: Invalid marga number index:', margaIndex);
             return res.status(500).json({ error: 'Invalid Marga number for website link' });
         }
-
-        console.log("Website link:", website, "Email landing link:", `<a href="${website}" target="_blank">Landing Page Link</a>`);
 
         // Prepare update parameters
         const updateParams = {
