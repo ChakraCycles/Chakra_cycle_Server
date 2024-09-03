@@ -132,15 +132,15 @@ app.post('/process-email-data', async (req, res) => {
     }
 
     const chakraPages = [
-        'subscribepage.io/Marga-Dharma-1-Muladhara',
-        'subscribepage.io/MGMwz6',
-        'subscribepage.io/S1vH5w',
-        'subscribepage.io/fxXZxs',
-        'subscribepage.io/6dcfHp',
-        'subscribepage.io/RTu7h1',
-        'subscribepage.io/LWvbwz',
-        'subscribepage.io/DLFiz6',
-        'subscribepage.io/1i6t35'
+        'https://subscribepage.io/Marga-Dharma-1-Muladhara',
+        'https://subscribepage.io/MGMwz6',
+        'https://subscribepage.io/S1vH5w',
+        'https://subscribepage.io/fxXZxs',
+        'https://subscribepage.io/6dcfHp',
+        'https://subscribepage.io/RTu7h1',
+        'https://subscribepage.io/LWvbwz',
+        'https://subscribepage.io/DLFiz6',
+        'https://subscribepage.io/1i6t35'
     ];
 
     try {
