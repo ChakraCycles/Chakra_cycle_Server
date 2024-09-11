@@ -104,7 +104,6 @@ const mailerlite = new MailerLite({
     api_key: process.env.MAILER_LITE_API_KEY
 });
 
-
 app.post('/process-email-data', async (req, res) => {
     console.log("Email triggered");
     const events = req?.body?.events;
@@ -178,7 +177,7 @@ app.post('/process-email-data', async (req, res) => {
         // Find the subscriber with the given email
         const target_subscriber = allSubscribers.find(sub => sub?.email === email);
 
-          if (!target_subscriber) {
+        if (!target_subscriber) {
             return res.status(404).json({ error: 'Subscriber not found' });
         }
 
@@ -215,6 +214,25 @@ app.post('/process-email-data', async (req, res) => {
             status: "active"
         };
 
+        // Construct email2_landing_link URL
+        const email2LandingLink = `https://areeba4427.github.io/Chakra-landing-page/?` +
+            `marganumber=${updateParams.fields.marganumber}` +
+            `&first_chakra=${encodeURIComponent(updateParams.fields.first_chakra)}` +
+            `&chakra_title_0_27=${encodeURIComponent(updateParams.fields.chakra_title_0_27)}` +
+            `&chakra_description_0_27=${encodeURIComponent(updateParams.fields.chakra_description_0_27)}` +
+            `&chakra_image_0_27=${encodeURIComponent(updateParams.fields.chakra_image_0_27)}` +
+            `&second_chakra=${encodeURIComponent(updateParams.fields.second_chakra)}` +
+            `&chakra_title_27_54=${encodeURIComponent(updateParams.fields.chakra_title_27_54)}` +
+            `&chakra_description_27_54=${encodeURIComponent(updateParams.fields.chakra_description_27_54)}` +
+            `&chakra_image_27_54=${encodeURIComponent(updateParams.fields.chakra_image_27_54)}` +
+            `&third_chakra=${encodeURIComponent(updateParams.fields.third_chakra)}` +
+            `&chakra_title_54_81=${encodeURIComponent(updateParams.fields.chakra_title_54_81)}` +
+            `&chakra_description_54_81=${encodeURIComponent(updateParams.fields.chakra_description_54_81)}` +
+            `&chakra_image_54_81=${encodeURIComponent(updateParams.fields.chakra_image_54_81)}`;
+
+        // Add the email2_landing_link to updateParams
+        updateParams.fields.email2_landing_link = email2LandingLink;
+
         // Update subscriber using their ID
         const updateResponse = await mailerlite.subscribers.update(target_subscriber.id, updateParams);
 
@@ -239,7 +257,6 @@ app.post('/process-email-data', async (req, res) => {
         return res.status(500).json({ error: 'Internal Server Error' });
     }
 });
-
 
 
 
