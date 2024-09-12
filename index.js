@@ -104,6 +104,13 @@ const mailerlite = new MailerLite({
     api_key: process.env.MAILER_LITE_API_KEY
 });
 
+
+
+
+
+
+
+
 app.post('/process-email-data', async (req, res) => {
     console.log("Email triggered");
     const events = req?.body?.events;
@@ -214,21 +221,29 @@ app.post('/process-email-data', async (req, res) => {
             status: "active"
         };
 
-        // Construct email2_landing_link URL
-        const email2LandingLink = `https://areeba4427.github.io/Chakra-landing-page/?` +
-            `marganumber=${updateParams.fields.marganumber}` +
-            `&first_chakra=${encodeURIComponent(updateParams.fields.first_chakra)}` +
-            `&chakra_title_0_27=${encodeURIComponent(updateParams.fields.chakra_title_0_27)}` +
-            `&chakra_description_0_27=${encodeURIComponent(updateParams.fields.chakra_description_0_27)}` +
-            `&chakra_image_0_27=${encodeURIComponent(updateParams.fields.chakra_image_0_27)}` +
-            `&second_chakra=${encodeURIComponent(updateParams.fields.second_chakra)}` +
-            `&chakra_title_27_54=${encodeURIComponent(updateParams.fields.chakra_title_27_54)}` +
-            `&chakra_description_27_54=${encodeURIComponent(updateParams.fields.chakra_description_27_54)}` +
-            `&chakra_image_27_54=${encodeURIComponent(updateParams.fields.chakra_image_27_54)}` +
-            `&third_chakra=${encodeURIComponent(updateParams.fields.third_chakra)}` +
-            `&chakra_title_54_81=${encodeURIComponent(updateParams.fields.chakra_title_54_81)}` +
-            `&chakra_description_54_81=${encodeURIComponent(updateParams.fields.chakra_description_54_81)}` +
-            `&chakra_image_54_81=${encodeURIComponent(updateParams.fields.chakra_image_54_81)}`;
+        // Compress the chakra data to include in the landing page URL
+        const chakraData = {
+            first_chakra: updateParams.fields.first_chakra,
+            chakra_title_0_27: updateParams.fields.chakra_title_0_27,
+            chakra_description_0_27: updateParams.fields.chakra_description_0_27,
+            chakra_image_0_27: updateParams.fields.chakra_image_0_27,
+
+            second_chakra: updateParams.fields.second_chakra,
+            chakra_title_27_54: updateParams.fields.chakra_title_27_54,
+            chakra_description_27_54: updateParams.fields.chakra_description_27_54,
+            chakra_image_27_54: updateParams.fields.chakra_image_27_54,
+
+            third_chakra: updateParams.fields.third_chakra,
+            chakra_title_54_81: updateParams.fields.chakra_title_54_81,
+            chakra_description_54_81: updateParams.fields.chakra_description_54_81,
+            chakra_image_54_81: updateParams.fields.chakra_image_54_81
+        };
+
+        // Compress the data by converting it to a string and encoding it using Base64
+        const compressedData = Buffer.from(JSON.stringify(chakraData)).toString('base64');
+
+        // Generate the new URL with the compressed data
+        const email2LandingLink = `https://areeba4427.github.io/Chakra-landing-page/?data=${compressedData}`;
 
         // Add the email2_landing_link to updateParams
         updateParams.fields.email2_landing_link = email2LandingLink;
@@ -242,10 +257,10 @@ app.post('/process-email-data', async (req, res) => {
         }
 
         const updatedData = {
-            id: updateResponse.data.data.id,
-            email: updateResponse.data.data.email,
-            status: updateResponse.data.data.status,
-            fields: updateResponse.data.data.fields
+            id: updateResponse?.data?.data?.id,
+            email: updateResponse?.data?.data?.email,
+            status: updateResponse?.data?.data?.status,
+            fields: updateResponse?.data?.data?.fields
         };
 
         console.log('Subscriber updated:', updatedData);
@@ -257,6 +272,28 @@ app.post('/process-email-data', async (req, res) => {
         return res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
