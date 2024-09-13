@@ -221,13 +221,10 @@ app.post('/process-email-data', async (req, res) => {
             `&chakra_image_0_27=${encodeURIComponent(updateParams.fields.chakra_image_0_27)}`;
            
             const email2LandingLinkptwo = 
-   
             `&second_chakra=${encodeURIComponent(updateParams.fields.second_chakra)}` +
-            `&chakra_title_27_54=${encodeURIComponent(updateParams.fields.chakra_title_27_54)}`;
-            
-            
+            `&chakra_title_27_54=${encodeURIComponent(updateParams.fields.chakra_title_27_54)}`+
             `&chakra_description_27_54=${encodeURIComponent(updateParams.fields.chakra_description_27_54)}` +
-            `&chakra_image_27_54=${encodeURIComponent(updateParams.fields.chakra_image_27_54)}`;
+            `&chakra_image_27_54=${encodeURIComponent(updateParams.fields.chakra_image_27_54)}`
     
             const email2LandingLinkpthree = 
             `&third_chakra=${encodeURIComponent(updateParams.fields.third_chakra)}` +
