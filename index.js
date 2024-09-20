@@ -214,7 +214,7 @@ app.post('/process-email-data', async (req, res) => {
         };
 
         // Construct email2_landing_link URL
-        const email2LandingLinkp = `https://areeba4427.github.io/Chakra-landing-page/?` +
+        const email2LandingLinkp = `https://chakracycles.github.io/Chakra_Landing_Page/?` +
             `&first_chakra=${encodeURIComponent(updateParams.fields.first_chakra)}` +
             `&chakra_title_0_27=${encodeURIComponent(updateParams.fields.chakra_title_0_27)}` +
             `&chakra_description_0_27=${encodeURIComponent(updateParams.fields.chakra_description_0_27)}` +
@@ -230,13 +230,13 @@ app.post('/process-email-data', async (req, res) => {
             `&third_chakra=${encodeURIComponent(updateParams.fields.third_chakra)}` +
             `&chakra_title_54_81=${encodeURIComponent(updateParams.fields.chakra_title_54_81)}` +
             `&chakra_description_54_81=${encodeURIComponent(updateParams.fields.chakra_description_54_81)}` +
-            `&chakra_image_54_81=${encodeURIComponent(updateParams.fields.chakra_image_54_81)}`;
+            `&chakra_image_54_81=${encodeURIComponent(updateParams.fields.chakra_image_54_81)}`+
+            `&name=${encodeURIComponent(name)}`;
 
         // Add the email2_landing_link to updateParams
         updateParams.fields.email2_landing_linkp1 = email2LandingLinkp;
         updateParams.fields.email2_landing_linkp2 = email2LandingLinkptwo;
         updateParams.fields.email2_landing_linkp3 = email2LandingLinkpthree;
-
 
         // Update subscriber using their ID
         const updateResponse = await mailerlite.subscribers.update(target_subscriber.id, updateParams);
