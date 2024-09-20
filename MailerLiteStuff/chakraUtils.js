@@ -2,6 +2,15 @@
 
 const chakraData = require('./ChakraData');
 
+
+
+function margaNumberChakra(number){
+
+    const chakraInfo = chakraData[number];
+    const title = chakraInfo.title;
+    return title;
+}
+
 function getChakraInfo(roots) {
     const ageRanges = ["0-27", "27-54", "54-81+"];
     const result = [];
@@ -30,5 +39,6 @@ function getChakraInfo(roots) {
 }
 
 module.exports = {
-    getChakraInfo
+    getChakraInfo,
+    margaNumberChakra
 };

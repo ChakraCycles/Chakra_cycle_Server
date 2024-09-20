@@ -6,7 +6,7 @@ const dotenv = require('dotenv');
 const { connectDB } = require('./db');
 const mongoose = require('mongoose');
 const { calculateNumber } = require('./MailerLiteStuff/dharma-number');
-const { getChakraInfo } = require('./MailerLiteStuff/chakraUtils');
+const { getChakraInfo  , margaNumberChakra} = require('./MailerLiteStuff/chakraUtils');
 
 const axios = require('axios');
 const MailerLite = require('@mailerlite/mailerlite-nodejs').default;
@@ -151,6 +151,7 @@ app.post('/process-email-data', async (req, res) => {
 
         // Get chakra info
         const chakraInfo = getChakraInfo(margaNumber?.roots);
+        const margaChakra = margaNumberChakra(margaNumber.margaNumber);
         if (!chakraInfo || !Array.isArray(chakraInfo) || chakraInfo.length < 3) {
             console.error('Error: chakraInfo is invalid:', chakraInfo);
             return res.status(500).json({ error: 'Failed to get chakra information' });
@@ -192,6 +193,7 @@ app.post('/process-email-data', async (req, res) => {
         const updateParams = {
             fields: {
                 marganumber: margaNumber?.margaNumber,
+                rulechakra:margaChakra,
 
                 first_chakra: margaNumber.roots[0],
                 chakra_title_0_27: chakraInfo[0]?.title,
@@ -218,13 +220,15 @@ app.post('/process-email-data', async (req, res) => {
             `&first_chakra=${encodeURIComponent(updateParams.fields.first_chakra)}` +
             `&chakra_title_0_27=${encodeURIComponent(updateParams.fields.chakra_title_0_27)}` +
             `&chakra_description_0_27=${encodeURIComponent(updateParams.fields.chakra_description_0_27)}` +
-            `&chakra_image_0_27=${encodeURIComponent(updateParams.fields.chakra_image_0_27)}`;
+            `&chakra_image_0_27=${encodeURIComponent(updateParams.fields.chakra_image_0_27)}` +
+            `&marganumber=${encodeURIComponent(updateParams.fields.marganumber)}`;
            
             const email2LandingLinkptwo = 
             `&second_chakra=${encodeURIComponent(updateParams.fields.second_chakra)}` +
             `&chakra_title_27_54=${encodeURIComponent(updateParams.fields.chakra_title_27_54)}`+
             `&chakra_description_27_54=${encodeURIComponent(updateParams.fields.chakra_description_27_54)}` +
-            `&chakra_image_27_54=${encodeURIComponent(updateParams.fields.chakra_image_27_54)}`
+            `&chakra_image_27_54=${encodeURIComponent(updateParams.fields.chakra_image_27_54)}` +
+            `&rulechakra=${encodeURIComponent(updateParams.fields.rulechakra)}`
     
             const email2LandingLinkpthree = 
             `&third_chakra=${encodeURIComponent(updateParams.fields.third_chakra)}` +
