@@ -130,15 +130,15 @@ app.post('/process-email-data', async (req, res) => {
     }
 
     const chakraPages = [
-        'https://subscribepage.io/Marga-Dharma-1-Muladhara',
-        'https://subscribepage.io/MGMwz6',
-        'https://subscribepage.io/S1vH5w',
-        'https://subscribepage.io/fxXZxs',
-        'https://subscribepage.io/6dcfHp',
-        'https://subscribepage.io/RTu7h1',
-        'https://subscribepage.io/LWvbwz',
-        'https://subscribepage.io/DLFiz6',
-        'https://subscribepage.io/1i6t35'
+        'https://reading.thechakracycles.com/muladhara',
+        'https://reading.thechakracycles.com/Swadhistana',
+        'https://reading.thechakracycles.com/Manipura',
+        'https://reading.thechakracycles.com/Anahata',
+        'https://reading.thechakracycles.com/Vishuddha',
+        'https://reading.thechakracycles.com/Anja',
+        'https://reading.thechakracycles.com/Sahasrara',
+        'https://reading.thechakracycles.com/Narayanana',
+        'https://reading.thechakracycles.com/Brahmananda'
     ];
 
     try {
@@ -195,17 +195,17 @@ app.post('/process-email-data', async (req, res) => {
                 marganumber: margaNumber?.margaNumber,
                 rulechakra:margaChakra,
 
-                first_chakra: margaNumber.roots[0],
+                first_chakra: margaNumber?.roots[0],
                 chakra_title_0_27: chakraInfo[0]?.title,
                 chakra_description_0_27: chakraInfo[0]?.description,
                 chakra_image_0_27: chakraInfo[0]?.image,
 
-                second_chakra: margaNumber.roots[1],
+                second_chakra: margaNumber?.roots[1],
                 chakra_title_27_54: chakraInfo[1]?.title,
                 chakra_description_27_54: chakraInfo[1]?.description,
                 chakra_image_27_54: chakraInfo[1]?.image,
 
-                third_chakra: margaNumber.roots[2],
+                third_chakra: margaNumber?.roots[2],
                 chakra_title_54_81: chakraInfo[2]?.title,
                 chakra_description_54_81: chakraInfo[2]?.description,
                 chakra_image_54_81: chakraInfo[2]?.image,
