@@ -7,6 +7,10 @@ const { connectDB } = require('./db');
 const mongoose = require('mongoose');
 const { calculateNumber } = require('./MailerLiteStuff/dharma-number');
 const { getChakraInfo  , margaNumberChakra} = require('./MailerLiteStuff/chakraUtils');
+const fs = require('fs');
+const cheerio = require('cheerio');
+const cors = require('cors');
+
 
 const axios = require('axios');
 const MailerLite = require('@mailerlite/mailerlite-nodejs').default;
@@ -14,6 +18,7 @@ const MailerLite = require('@mailerlite/mailerlite-nodejs').default;
 
 const app = express();
 
+app.use(cors());
 dotenv.config();
 
 // Increase payload limit
@@ -24,6 +29,55 @@ app.use(bodyParser.urlencoded({ limit: '55200mb', extended: true, parameterLimit
 app.get("/", (req, res) => {
     res.send("Server is up and running!");
 })
+
+// Define the endpoint to fetch the date and rate
+app.get('/update-rate', async (req, res) => {
+    try {
+        // Fetch and process the data
+        const URL = 'https://www.federalreserve.gov/releases/h15/.';
+        const response = await axios.get(URL);
+        const htmlContent = response.data;
+        const $ = cheerio.load(htmlContent);
+
+        // Extract the rate from the parent <th> with id="id93607b0"
+        let rate_V;
+        const rateParentTh = $('th#id93607b0'); // Find the <th> with id="id93607b0"
+        if (rateParentTh.length) {
+            // Find the associated <td class="data"> within the same row
+            const rateTd = rateParentTh.closest('tr').find('td.data').last(); // Get the last <td class="data">
+            rate_V = rateTd.text().trim(); // Get the rate value
+        }
+
+        let date_V;
+        const dateParentTh = $('th#instruments'); // Find the <th> with id="instruments"
+        if (dateParentTh?.length) {
+            // Get the text for the date (from the header row)
+            date_V = dateParentTh.nextAll('th').last().text().trim(); // Get the last <th> after instruments
+        }
+        
+        // Add space between the year, month, and day
+        if (date_V) {
+            // Match the year, month, and day format and insert a space after the month
+            date_V = date_V.replace(/(\d{4})([a-zA-Z]+)(\d{1,2})$/, '$1 $2 $3'); 
+        }
+
+        // If either rate or date is not found, send an error response
+        if (!rate_V || !date_V) {
+            return res.status(404).send('Could not find the rate or date.');
+        }
+
+        // Send the extracted data in the response
+        res.json({
+            date: date_V,
+            rate: rate_V
+        });
+
+    } catch (err) {
+        console.error('Error fetching the data:', err);
+        res.status(500).send('Error fetching or processing the data.');
+    }
+});
+
 app.post('/yantra-inputs', async (req, res) => {
 
     console.log("recieved response");
