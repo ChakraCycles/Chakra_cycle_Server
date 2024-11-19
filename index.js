@@ -41,12 +41,16 @@ app.get('/update-rate', async (req, res) => {
 
         // Extract the rate from the parent <th> with id="id93607b0"
         let rate_V;
-        const rateParentTh = $('th#id93607b0'); // Find the <th> with id="id93607b0"
+        const rateParentTh = $('th').filter(function() {
+            return $(this).text().trim().includes('Bank prime loan'); // Match based on inner text
+        });
+        
         if (rateParentTh.length) {
             // Find the associated <td class="data"> within the same row
             const rateTd = rateParentTh.closest('tr').find('td.data').last(); // Get the last <td class="data">
             rate_V = rateTd.text().trim(); // Get the rate value
         }
+        
 
         let date_V;
         const dateParentTh = $('th#instruments'); // Find the <th> with id="instruments"
@@ -60,7 +64,7 @@ app.get('/update-rate', async (req, res) => {
             // Match the year, month, and day format and insert a space after the month
             date_V = date_V.replace(/(\d{4})([a-zA-Z]+)(\d{1,2})$/, '$1 $2 $3'); 
         }
-
+       
         // If either rate or date is not found, send an error response
         if (!rate_V || !date_V) {
             return res.status(404).send('Could not find the rate or date.');
