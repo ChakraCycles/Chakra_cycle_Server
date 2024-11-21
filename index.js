@@ -163,14 +163,9 @@ const mailerlite = new MailerLite({
 });
 
 app.post('/process-email-data', async (req, res) => {
-    console.log("Email triggered");
     const events = req?.body?.events;
 
     console.log("incoming body =" , req?.body);
-    if (!Array.isArray(events)) {
-        return res.status(400).json({ error: 'Invalid data format' });
-    }
-
     let name, email, dob;
 
     // Iterate over each event in the events array
@@ -182,10 +177,10 @@ app.post('/process-email-data', async (req, res) => {
 }
     });
 
-    // Check if the required variables are defined
-    if (!email || !dob) {
-        return res.status(400).json({ error: 'Missing email or date of birth' });
-    }
+    // // Check if the required variables are defined
+    // if (!email || !dob) {
+    //     return res.status(400).json({ error: 'Missing email or date of birth' });
+    // }
 
     const chakraPages = [
         'https://reading.thechakracycles.com/muladhara',
@@ -202,18 +197,18 @@ app.post('/process-email-data', async (req, res) => {
     try {
         // Process the data to get the marga_number
         const margaNumber = await calculateNumber(dob);
-        if (!margaNumber || !margaNumber.margaNumber) {
+        if (!margaNumber || !margaNumber?.margaNumber) {
             console.error('Error: margaNumber is undefined or invalid:', margaNumber);
             return res.status(500).json({ error: 'Failed to calculate marga number' });
         }
 
         // Get chakra info
         const chakraInfo = getChakraInfo(margaNumber?.roots);
-        const margaChakra = margaNumberChakra(margaNumber.margaNumber);
-        if (!chakraInfo || !Array.isArray(chakraInfo) || chakraInfo.length < 3) {
-            console.error('Error: chakraInfo is invalid:', chakraInfo);
-            return res.status(500).json({ error: 'Failed to get chakra information' });
-        }
+        const margaChakra = margaNumberChakra(margaNumber?.margaNumber);
+        // if (!chakraInfo || !Array.isArray(chakraInfo) || chakraInfo.length < 3) {
+        //     console.error('Error: chakraInfo is invalid:', chakraInfo);
+        //     return res.status(500).json({ error: 'Failed to get chakra information' });
+        // }
 
         const params = {
             filter: {

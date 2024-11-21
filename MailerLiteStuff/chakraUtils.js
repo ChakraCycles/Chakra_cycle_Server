@@ -2,8 +2,6 @@
 
 const chakraData = require('./ChakraData');
 
-
-
 function margaNumberChakra(number){
 
     const chakraInfo = chakraData[number];
