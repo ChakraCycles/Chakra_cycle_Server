@@ -171,9 +171,9 @@ app.post('/process-email-data', async (req, res) => {
     // Iterate over each event in the events array
     events.forEach(event => {
         if (event?.fields) {
-            name = event?.fields?.name;
-            email = event?.email; // Email is directly in event
-            dob = event?.fields?.date_of_birth;
+            name = event?.fields?.name  || "user";
+            email = event?.email || ""; // Email is directly in event
+            dob = event?.fields?.date_of_birth || "01/01/2000";
 }
     });
 
@@ -197,10 +197,10 @@ app.post('/process-email-data', async (req, res) => {
     try {
         // Process the data to get the marga_number
         const margaNumber = await calculateNumber(dob);
-        if (!margaNumber || !margaNumber?.margaNumber) {
-            console.error('Error: margaNumber is undefined or invalid:', margaNumber);
-            return res.status(500).json({ error: 'Failed to calculate marga number' });
-        }
+        // if (!margaNumber || !margaNumber?.margaNumber) {
+        //     console.error('Error: margaNumber is undefined or invalid:', margaNumber);
+        //     return res.status(500).json({ error: 'Failed to calculate marga number' });
+        // }
 
         // Get chakra info
         const chakraInfo = getChakraInfo(margaNumber?.roots);
@@ -221,26 +221,26 @@ app.post('/process-email-data', async (req, res) => {
         const response = await mailerlite.subscribers.get(params);
         const allSubscribers = response?.data?.data;
 
-        // Check if API response is valid
-        if (!allSubscribers || !Array.isArray(allSubscribers)) {
-            console.error('Error: Invalid MailerLite response:', response);
-            return res.status(500).json({ error: 'Failed to fetch subscribers' });
-        }
+        // // Check if API response is valid
+        // if (!allSubscribers || !Array.isArray(allSubscribers)) {
+        //     console.error('Error: Invalid MailerLite response:', response);
+        //     return res.status(500).json({ error: 'Failed to fetch subscribers' });
+        // }
 
         // Find the subscriber with the given email
         const target_subscriber = allSubscribers.find(sub => sub?.email === email);
 
-        if (!target_subscriber) {
-            return res.status(404).json({ error: 'Subscriber not found' });
-        }
+        // if (!target_subscriber) {
+        //     return res.status(404).json({ error: 'Subscriber not found' });
+        // }
 
         // Select the correct website link based on the margaNumber
         const margaIndex = Number(margaNumber.margaNumber) - 1;
         const website = chakraPages[margaIndex];
-        if (!website) {
-            console.error('Error: Invalid marga number index:', margaIndex);
-            return res.status(500).json({ error: 'Invalid Marga number for website link' });
-        }
+        // if (!website) {
+        //     console.error('Error: Invalid marga number index:', margaIndex);
+        //     return res.status(500).json({ error: 'Invalid Marga number for website link' });
+        // }
 
         // Prepare update parameters
         const updateParams = {
@@ -298,10 +298,10 @@ app.post('/process-email-data', async (req, res) => {
         // Update subscriber using their ID
         const updateResponse = await mailerlite.subscribers.update(target_subscriber.id, updateParams);
 
-        if (!updateResponse || !updateResponse.data || !updateResponse.data.data) {
-            console.error('Error: Failed to update subscriber:', updateResponse);
-            return res.status(500).json({ error: 'Failed to update subscriber' });
-        }
+        // if (!updateResponse || !updateResponse.data || !updateResponse.data.data) {
+        //     console.error('Error: Failed to update subscriber:', updateResponse);
+        //     return res.status(500).json({ error: 'Failed to update subscriber' });
+        // }
 
         const updatedData = {
             id: updateResponse.data.data.id,
