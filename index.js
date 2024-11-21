@@ -203,117 +203,123 @@ app.post('/process-email-data', async (req, res) => {
         // }
 
         // Get chakra info
-        const chakraInfo = getChakraInfo(margaNumber?.roots);
-        const margaChakra = margaNumberChakra(margaNumber?.margaNumber);
-        // if (!chakraInfo || !Array.isArray(chakraInfo) || chakraInfo.length < 3) {
-        //     console.error('Error: chakraInfo is invalid:', chakraInfo);
-        //     return res.status(500).json({ error: 'Failed to get chakra information' });
-        // }
+        if(margaNumber && margaNumber?.margaNumber && margaNumber?.roots)
+        {
 
-        const params = {
-            filter: {
-                status: "active"
-            },
-            limit: 10
-        };
-
-        // Fetch subscribers
-        const response = await mailerlite.subscribers.get(params);
-        const allSubscribers = response?.data?.data;
-
-        // // Check if API response is valid
-        // if (!allSubscribers || !Array.isArray(allSubscribers)) {
-        //     console.error('Error: Invalid MailerLite response:', response);
-        //     return res.status(500).json({ error: 'Failed to fetch subscribers' });
-        // }
-
-        // Find the subscriber with the given email
-        const target_subscriber = allSubscribers.find(sub => sub?.email === email);
-
-        // if (!target_subscriber) {
-        //     return res.status(404).json({ error: 'Subscriber not found' });
-        // }
-
-        // Select the correct website link based on the margaNumber
-        const margaIndex = Number(margaNumber.margaNumber) - 1;
-        const website = chakraPages[margaIndex];
-        // if (!website) {
-        //     console.error('Error: Invalid marga number index:', margaIndex);
-        //     return res.status(500).json({ error: 'Invalid Marga number for website link' });
-        // }
-
-        // Prepare update parameters
-        const updateParams = {
-            fields: {
-                marganumber: margaNumber?.margaNumber,
-                rulechakra:margaChakra,
-
-                first_chakra: margaNumber?.roots[0],
-                chakra_title_0_27: chakraInfo[0]?.title,
-                chakra_description_0_27: chakraInfo[0]?.description,
-                chakra_image_0_27: chakraInfo[0]?.image,
-
-                second_chakra: margaNumber?.roots[1],
-                chakra_title_27_54: chakraInfo[1]?.title,
-                chakra_description_27_54: chakraInfo[1]?.description,
-                chakra_image_27_54: chakraInfo[1]?.image,
-
-                third_chakra: margaNumber?.roots[2],
-                chakra_title_54_81: chakraInfo[2]?.title,
-                chakra_description_54_81: chakraInfo[2]?.description,
-                chakra_image_54_81: chakraInfo[2]?.image,
-
-                email1_landing_link: website
-            },
-            status: "active"
-        };
-
-        // Construct email2_landing_link URL
-        const email2LandingLinkp = `https://chakracycles.github.io/Chakra_Landing_Page/?` +
-            `&first_chakra=${encodeURIComponent(updateParams.fields.first_chakra)}` +
-            `&chakra_title_0_27=${encodeURIComponent(updateParams.fields.chakra_title_0_27)}` +
-            `&chakra_description_0_27=${encodeURIComponent(updateParams.fields.chakra_description_0_27)}` +
-            `&chakra_image_0_27=${encodeURIComponent(updateParams.fields.chakra_image_0_27)}` +
-            `&marganumber=${encodeURIComponent(updateParams.fields.marganumber)}`;
-           
-            const email2LandingLinkptwo = 
-            `&second_chakra=${encodeURIComponent(updateParams.fields.second_chakra)}` +
-            `&chakra_title_27_54=${encodeURIComponent(updateParams.fields.chakra_title_27_54)}`+
-            `&chakra_description_27_54=${encodeURIComponent(updateParams.fields.chakra_description_27_54)}` +
-            `&chakra_image_27_54=${encodeURIComponent(updateParams.fields.chakra_image_27_54)}` +
-            `&rulechakra=${encodeURIComponent(updateParams.fields.rulechakra)}`
+            const chakraInfo = getChakraInfo(margaNumber?.roots);
+            const margaChakra = margaNumberChakra(margaNumber?.margaNumber);
+            // if (!chakraInfo || !Array.isArray(chakraInfo) || chakraInfo.length < 3) {
+            //     console.error('Error: chakraInfo is invalid:', chakraInfo);
+            //     return res.status(500).json({ error: 'Failed to get chakra information' });
+            // }
     
-            const email2LandingLinkpthree = 
-            `&third_chakra=${encodeURIComponent(updateParams.fields.third_chakra)}` +
-            `&chakra_title_54_81=${encodeURIComponent(updateParams.fields.chakra_title_54_81)}` +
-            `&chakra_description_54_81=${encodeURIComponent(updateParams.fields.chakra_description_54_81)}` +
-            `&chakra_image_54_81=${encodeURIComponent(updateParams.fields.chakra_image_54_81)}`+
-            `&name=${encodeURIComponent(name)}`;
-
-        // Add the email2_landing_link to updateParams
-        updateParams.fields.email2_landing_linkp1 = email2LandingLinkp;
-        updateParams.fields.email2_landing_linkp2 = email2LandingLinkptwo;
-        updateParams.fields.email2_landing_linkp3 = email2LandingLinkpthree;
-
-        // Update subscriber using their ID
-        const updateResponse = await mailerlite.subscribers.update(target_subscriber.id, updateParams);
-
-        // if (!updateResponse || !updateResponse.data || !updateResponse.data.data) {
-        //     console.error('Error: Failed to update subscriber:', updateResponse);
-        //     return res.status(500).json({ error: 'Failed to update subscriber' });
-        // }
-
-        const updatedData = {
-            id: updateResponse.data.data.id,
-            email: updateResponse.data.data.email,
-            status: updateResponse.data.data.status,
-            fields: updateResponse.data.data.fields
-        };
-
-        console.log('Subscriber updated:', updatedData);
-
+            const params = {
+                filter: {
+                    status: "active"
+                },
+                limit: 10
+            };
+    
+            // Fetch subscribers
+            const response = await mailerlite.subscribers.get(params);
+            const allSubscribers = response?.data?.data;
+    
+            // // Check if API response is valid
+            // if (!allSubscribers || !Array.isArray(allSubscribers)) {
+            //     console.error('Error: Invalid MailerLite response:', response);
+            //     return res.status(500).json({ error: 'Failed to fetch subscribers' });
+            // }
+    
+            // Find the subscriber with the given email
+            const target_subscriber = allSubscribers.find(sub => sub?.email === email);
+    
+            // if (!target_subscriber) {
+            //     return res.status(404).json({ error: 'Subscriber not found' });
+            // }
+    
+            // Select the correct website link based on the margaNumber
+            const margaIndex = Number(margaNumber.margaNumber) - 1;
+            const website = chakraPages[margaIndex];
+            // if (!website) {
+            //     console.error('Error: Invalid marga number index:', margaIndex);
+            //     return res.status(500).json({ error: 'Invalid Marga number for website link' });
+            // }
+    
+            // Prepare update parameters
+            const updateParams = {
+                fields: {
+                    marganumber: margaNumber?.margaNumber,
+                    rulechakra:margaChakra,
+    
+                    first_chakra: margaNumber?.roots[0],
+                    chakra_title_0_27: chakraInfo[0]?.title,
+                    chakra_description_0_27: chakraInfo[0]?.description,
+                    chakra_image_0_27: chakraInfo[0]?.image,
+    
+                    second_chakra: margaNumber?.roots[1],
+                    chakra_title_27_54: chakraInfo[1]?.title,
+                    chakra_description_27_54: chakraInfo[1]?.description,
+                    chakra_image_27_54: chakraInfo[1]?.image,
+    
+                    third_chakra: margaNumber?.roots[2],
+                    chakra_title_54_81: chakraInfo[2]?.title,
+                    chakra_description_54_81: chakraInfo[2]?.description,
+                    chakra_image_54_81: chakraInfo[2]?.image,
+    
+                    email1_landing_link: website
+                },
+                status: "active"
+            };
+    
+            // Construct email2_landing_link URL
+            const email2LandingLinkp = `https://chakracycles.github.io/Chakra_Landing_Page/?` +
+                `&first_chakra=${encodeURIComponent(updateParams.fields.first_chakra)}` +
+                `&chakra_title_0_27=${encodeURIComponent(updateParams.fields.chakra_title_0_27)}` +
+                `&chakra_description_0_27=${encodeURIComponent(updateParams.fields.chakra_description_0_27)}` +
+                `&chakra_image_0_27=${encodeURIComponent(updateParams.fields.chakra_image_0_27)}` +
+                `&marganumber=${encodeURIComponent(updateParams.fields.marganumber)}`;
+               
+                const email2LandingLinkptwo = 
+                `&second_chakra=${encodeURIComponent(updateParams.fields.second_chakra)}` +
+                `&chakra_title_27_54=${encodeURIComponent(updateParams.fields.chakra_title_27_54)}`+
+                `&chakra_description_27_54=${encodeURIComponent(updateParams.fields.chakra_description_27_54)}` +
+                `&chakra_image_27_54=${encodeURIComponent(updateParams.fields.chakra_image_27_54)}` +
+                `&rulechakra=${encodeURIComponent(updateParams.fields.rulechakra)}`
+        
+                const email2LandingLinkpthree = 
+                `&third_chakra=${encodeURIComponent(updateParams.fields.third_chakra)}` +
+                `&chakra_title_54_81=${encodeURIComponent(updateParams.fields.chakra_title_54_81)}` +
+                `&chakra_description_54_81=${encodeURIComponent(updateParams.fields.chakra_description_54_81)}` +
+                `&chakra_image_54_81=${encodeURIComponent(updateParams.fields.chakra_image_54_81)}`+
+                `&name=${encodeURIComponent(name)}`;
+    
+            // Add the email2_landing_link to updateParams
+            updateParams.fields.email2_landing_linkp1 = email2LandingLinkp;
+            updateParams.fields.email2_landing_linkp2 = email2LandingLinkptwo;
+            updateParams.fields.email2_landing_linkp3 = email2LandingLinkpthree;
+    
+            // Update subscriber using their ID
+            const updateResponse = await mailerlite.subscribers.update(target_subscriber.id, updateParams);
+    
+            // if (!updateResponse || !updateResponse.data || !updateResponse.data.data) {
+            //     console.error('Error: Failed to update subscriber:', updateResponse);
+            //     return res.status(500).json({ error: 'Failed to update subscriber' });
+            // }
+    
+            const updatedData = {
+                id: updateResponse.data.data.id,
+                email: updateResponse.data.data.email,
+                status: updateResponse.data.data.status,
+                fields: updateResponse.data.data.fields
+            };
+    
+            console.log('Subscriber updated:', updatedData);
+    
+      
+            
+        }
         // Send back the result and subscriber data
-        return res.json({ marga_number: margaNumber, subscriber: updatedData });
+        return res.json({ message:"API executed successfully!"});
     } catch (error) {
         console.error('Error processing data or updating subscriber:', error);
         return res.status(500).json({ error: 'Internal Server Error' });
