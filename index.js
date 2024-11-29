@@ -171,7 +171,7 @@ app.post('/process-email-data', async (req, res) => {
     // Iterate over each event in the events array
     events.forEach(event => {
         if (event?.fields) {
-            name = event?.fields?.name  || "user";
+            name = event?.fields?.first_name  || "user";
             email = event?.email || ""; // Email is directly in event
             dob = event?.fields?.date_of_birth || "01/01/2000";
 }
