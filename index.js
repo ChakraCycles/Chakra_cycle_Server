@@ -191,6 +191,8 @@ app.post('/add-subscriber' , async (req, res) => {
         .then(response => {
           console.log("Subscriber created through custom HTML form" , response?.data);
         })
+
+        res.redirect('https://thechakracycles.com/success');
 })
 
 
