@@ -162,6 +162,38 @@ const mailerlite = new MailerLite({
     api_key: process.env.MAILER_LITE_API_KEY
 });
 
+const formatDate = (date) => {
+    const pad = (num) => (num < 10 ? `0${num}` : num); // Helper function to pad single-digit numbers
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+};
+
+app.post('/add-subscriber' , async (req, res) => {
+    console.log("coming data" , req.body);
+    const {first_name , email , date_of_birth} = req?.body
+
+    const subscriberData = {
+        email: email,
+        fields: {
+            name: first_name,
+            date_of_birth: date_of_birth
+        },
+        groups: ['126813082419726124'],
+        status: 'active',
+        subscribed_at: formatDate(new Date()), // Properly formatted timestamp
+        ip_address: '', // Set if available
+        opted_in_at: '', // Set if needed
+        optin_ip: '', // Set if needed
+        unsubscribed_at: '' // Set if needed
+    };
+
+      
+      mailerlite.subscribers.createOrUpdate(subscriberData)
+        .then(response => {
+          console.log("Subscriber created through custom HTML form" , response?.data);
+        })
+})
+
+
 app.post('/process-email-data', async (req, res) => {
     const events = req?.body?.events;
 
