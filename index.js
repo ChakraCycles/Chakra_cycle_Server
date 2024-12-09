@@ -6,7 +6,7 @@ const dotenv = require('dotenv');
 const { connectDB } = require('./db');
 const mongoose = require('mongoose');
 const { calculateNumber } = require('./MailerLiteStuff/dharma-number');
-const { getChakraInfo  , margaNumberChakra} = require('./MailerLiteStuff/chakraUtils');
+const { getChakraInfo, margaNumberChakra } = require('./MailerLiteStuff/chakraUtils');
 const fs = require('fs');
 const cheerio = require('cheerio');
 const cors = require('cors');
@@ -41,16 +41,16 @@ app.get('/update-rate', async (req, res) => {
 
         // Extract the rate from the parent <th> with id="id93607b0"
         let rate_V;
-        const rateParentTh = $('th').filter(function() {
+        const rateParentTh = $('th').filter(function () {
             return $(this).text().trim().includes('Bank prime loan'); // Match based on inner text
         });
-        
+
         if (rateParentTh.length) {
             // Find the associated <td class="data"> within the same row
             const rateTd = rateParentTh.closest('tr').find('td.data').last(); // Get the last <td class="data">
             rate_V = rateTd.text().trim(); // Get the rate value
         }
-        
+
 
         let date_V;
         const dateParentTh = $('th#instruments'); // Find the <th> with id="instruments"
@@ -58,13 +58,13 @@ app.get('/update-rate', async (req, res) => {
             // Get the text for the date (from the header row)
             date_V = dateParentTh.nextAll('th').last().text().trim(); // Get the last <th> after instruments
         }
-        
+
         // Add space between the year, month, and day
         if (date_V) {
             // Match the year, month, and day format and insert a space after the month
-            date_V = date_V.replace(/(\d{4})([a-zA-Z]+)(\d{1,2})$/, '$1 $2 $3'); 
+            date_V = date_V.replace(/(\d{4})([a-zA-Z]+)(\d{1,2})$/, '$1 $2 $3');
         }
-       
+
         // If either rate or date is not found, send an error response
         if (!rate_V || !date_V) {
             return res.status(404).send('Could not find the rate or date.');
@@ -167,13 +167,14 @@ const formatDate = (date) => {
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
 };
 
-app.post('/add-subscriber' , async (req, res) => {
-    console.log("coming data" , req.body);
-    const {first_name , email , date_of_birth} = req?.body
+app.post('/add-subscriber', async (req, res) => {
+    console.log("coming data", req.body);
+    const { first_name, email, date_of_birth } = req?.body
 
     const subscriberData = {
         email: email,
         fields: {
+            first_name: first_name,
             name: first_name,
             date_of_birth: date_of_birth
         },
@@ -186,178 +187,183 @@ app.post('/add-subscriber' , async (req, res) => {
         unsubscribed_at: '' // Set if needed
     };
 
-      
-      mailerlite.subscribers.createOrUpdate(subscriberData)
+
+    mailerlite.subscribers.createOrUpdate(subscriberData)
         .then(response => {
-          console.log("Subscriber created through custom HTML form" , response?.data);
+            console.log("Subscriber created through custom HTML form", response?.data);
         })
 
-        res.redirect('https://thechakracycles.com/success');
+    res.redirect('https://thechakracycles.com/success');
 })
 
 
 app.post('/process-email-data', async (req, res) => {
     const events = req?.body?.events;
 
-    console.log("incoming body =" , req?.body);
+    console.log("incoming body =", req?.body);
     let name, email, dob;
 
     // Iterate over each event in the events array
     events.forEach(event => {
         if (event?.fields) {
-            name = event?.fields?.first_name  || "user";
+            name = event?.fields?.first_name || "user";
             email = event?.email || ""; // Email is directly in event
-            dob = event?.fields?.date_of_birth || "01/01/2000";
-}
+            dob = event?.fields?.date_of_birth;
+        }
+        else {
+            name = event?.first_name || "user";
+            email = event?.email || ""; // Email is directly in event
+            dob = event?.date_of_birth;
+        }
+    
     });
 
-    // // Check if the required variables are defined
-    // if (!email || !dob) {
-    //     return res.status(400).json({ error: 'Missing email or date of birth' });
+// // Check if the required variables are defined
+// if (!email || !dob) {
+//     return res.status(400).json({ error: 'Missing email or date of birth' });
+// }
+
+const chakraPages = [
+    'https://reading.thechakracycles.com/muladhara',
+    'https://reading.thechakracycles.com/Swadhistana',
+    'https://reading.thechakracycles.com/Manipura',
+    'https://reading.thechakracycles.com/Anahata',
+    'https://reading.thechakracycles.com/Vishuddha',
+    'https://reading.thechakracycles.com/Anja',
+    'https://reading.thechakracycles.com/Sahasrara',
+    'https://reading.thechakracycles.com/Narayanana',
+    'https://reading.thechakracycles.com/Brahmananda'
+];
+
+try {
+    // Process the data to get the marga_number
+    const margaNumber = await calculateNumber(dob);
+    // if (!margaNumber || !margaNumber?.margaNumber) {
+    //     console.error('Error: margaNumber is undefined or invalid:', margaNumber);
+    //     return res.status(500).json({ error: 'Failed to calculate marga number' });
     // }
 
-    const chakraPages = [
-        'https://reading.thechakracycles.com/muladhara',
-        'https://reading.thechakracycles.com/Swadhistana',
-        'https://reading.thechakracycles.com/Manipura',
-        'https://reading.thechakracycles.com/Anahata',
-        'https://reading.thechakracycles.com/Vishuddha',
-        'https://reading.thechakracycles.com/Anja',
-        'https://reading.thechakracycles.com/Sahasrara',
-        'https://reading.thechakracycles.com/Narayanana',
-        'https://reading.thechakracycles.com/Brahmananda'
-    ];
+    // Get chakra info
+    if (margaNumber && margaNumber?.margaNumber && margaNumber?.roots) {
 
-    try {
-        // Process the data to get the marga_number
-        const margaNumber = await calculateNumber(dob);
-        // if (!margaNumber || !margaNumber?.margaNumber) {
-        //     console.error('Error: margaNumber is undefined or invalid:', margaNumber);
-        //     return res.status(500).json({ error: 'Failed to calculate marga number' });
+        const chakraInfo = getChakraInfo(margaNumber?.roots);
+        const margaChakra = margaNumberChakra(margaNumber?.margaNumber);
+        // if (!chakraInfo || !Array.isArray(chakraInfo) || chakraInfo.length < 3) {
+        //     console.error('Error: chakraInfo is invalid:', chakraInfo);
+        //     return res.status(500).json({ error: 'Failed to get chakra information' });
         // }
 
-        // Get chakra info
-        if(margaNumber && margaNumber?.margaNumber && margaNumber?.roots)
-        {
-
-            const chakraInfo = getChakraInfo(margaNumber?.roots);
-            const margaChakra = margaNumberChakra(margaNumber?.margaNumber);
-            // if (!chakraInfo || !Array.isArray(chakraInfo) || chakraInfo.length < 3) {
-            //     console.error('Error: chakraInfo is invalid:', chakraInfo);
-            //     return res.status(500).json({ error: 'Failed to get chakra information' });
-            // }
-    
-            const params = {
-                filter: {
-                    status: "active"
-                },
-                limit: 10
-            };
-    
-            // Fetch subscribers
-            const response = await mailerlite.subscribers.get(params);
-            const allSubscribers = response?.data?.data;
-    
-            // // Check if API response is valid
-            // if (!allSubscribers || !Array.isArray(allSubscribers)) {
-            //     console.error('Error: Invalid MailerLite response:', response);
-            //     return res.status(500).json({ error: 'Failed to fetch subscribers' });
-            // }
-    
-            // Find the subscriber with the given email
-            const target_subscriber = allSubscribers.find(sub => sub?.email === email);
-    
-            // if (!target_subscriber) {
-            //     return res.status(404).json({ error: 'Subscriber not found' });
-            // }
-    
-            // Select the correct website link based on the margaNumber
-            const margaIndex = Number(margaNumber.margaNumber) - 1;
-            const website = chakraPages[margaIndex];
-            // if (!website) {
-            //     console.error('Error: Invalid marga number index:', margaIndex);
-            //     return res.status(500).json({ error: 'Invalid Marga number for website link' });
-            // }
-    
-            // Prepare update parameters
-            const updateParams = {
-                fields: {
-                    marganumber: margaNumber?.margaNumber,
-                    rulechakra:margaChakra,
-    
-                    first_chakra: margaNumber?.roots[0],
-                    chakra_title_0_27: chakraInfo[0]?.title,
-                    chakra_description_0_27: chakraInfo[0]?.description,
-                    chakra_image_0_27: chakraInfo[0]?.image,
-    
-                    second_chakra: margaNumber?.roots[1],
-                    chakra_title_27_54: chakraInfo[1]?.title,
-                    chakra_description_27_54: chakraInfo[1]?.description,
-                    chakra_image_27_54: chakraInfo[1]?.image,
-    
-                    third_chakra: margaNumber?.roots[2],
-                    chakra_title_54_81: chakraInfo[2]?.title,
-                    chakra_description_54_81: chakraInfo[2]?.description,
-                    chakra_image_54_81: chakraInfo[2]?.image,
-    
-                    email1_landing_link: website
-                },
+        const params = {
+            filter: {
                 status: "active"
-            };
-    
-            // Construct email2_landing_link URL
-            const email2LandingLinkp = `https://chakracycles.github.io/Chakra_Landing_Page/?` +
-                `&first_chakra=${encodeURIComponent(updateParams.fields.first_chakra)}` +
-                `&chakra_title_0_27=${encodeURIComponent(updateParams.fields.chakra_title_0_27)}` +
-                `&chakra_description_0_27=${encodeURIComponent(updateParams.fields.chakra_description_0_27)}` +
-                `&chakra_image_0_27=${encodeURIComponent(updateParams.fields.chakra_image_0_27)}` +
-                `&marganumber=${encodeURIComponent(updateParams.fields.marganumber)}`;
-               
-                const email2LandingLinkptwo = 
-                `&second_chakra=${encodeURIComponent(updateParams.fields.second_chakra)}` +
-                `&chakra_title_27_54=${encodeURIComponent(updateParams.fields.chakra_title_27_54)}`+
-                `&chakra_description_27_54=${encodeURIComponent(updateParams.fields.chakra_description_27_54)}` +
-                `&chakra_image_27_54=${encodeURIComponent(updateParams.fields.chakra_image_27_54)}` +
-                `&rulechakra=${encodeURIComponent(updateParams.fields.rulechakra)}`
-        
-                const email2LandingLinkpthree = 
-                `&third_chakra=${encodeURIComponent(updateParams.fields.third_chakra)}` +
-                `&chakra_title_54_81=${encodeURIComponent(updateParams.fields.chakra_title_54_81)}` +
-                `&chakra_description_54_81=${encodeURIComponent(updateParams.fields.chakra_description_54_81)}` +
-                `&chakra_image_54_81=${encodeURIComponent(updateParams.fields.chakra_image_54_81)}`+
-                `&name=${encodeURIComponent(name)}`;
-    
-            // Add the email2_landing_link to updateParams
-            updateParams.fields.email2_landing_linkp1 = email2LandingLinkp;
-            updateParams.fields.email2_landing_linkp2 = email2LandingLinkptwo;
-            updateParams.fields.email2_landing_linkp3 = email2LandingLinkpthree;
-    
-            // Update subscriber using their ID
-            const updateResponse = await mailerlite.subscribers.update(target_subscriber.id, updateParams);
-    
-            // if (!updateResponse || !updateResponse.data || !updateResponse.data.data) {
-            //     console.error('Error: Failed to update subscriber:', updateResponse);
-            //     return res.status(500).json({ error: 'Failed to update subscriber' });
-            // }
-    
-            const updatedData = {
-                id: updateResponse.data.data.id,
-                email: updateResponse.data.data.email,
-                status: updateResponse.data.data.status,
-                fields: updateResponse.data.data.fields
-            };
-    
-            console.log('Subscriber updated:', updatedData);
-    
-      
-            
-        }
-        // Send back the result and subscriber data
-        return res.json({ message:"API executed successfully!"});
-    } catch (error) {
-        console.error('Error processing data or updating subscriber:', error);
-        return res.status(500).json({ error: 'Internal Server Error' });
+            },
+            limit: 10
+        };
+
+        // Fetch subscribers
+        const response = await mailerlite.subscribers.get(params);
+        const allSubscribers = response?.data?.data;
+
+        // // Check if API response is valid
+        // if (!allSubscribers || !Array.isArray(allSubscribers)) {
+        //     console.error('Error: Invalid MailerLite response:', response);
+        //     return res.status(500).json({ error: 'Failed to fetch subscribers' });
+        // }
+
+        // Find the subscriber with the given email
+        const target_subscriber = allSubscribers.find(sub => sub?.email === email);
+
+        // if (!target_subscriber) {
+        //     return res.status(404).json({ error: 'Subscriber not found' });
+        // }
+
+        // Select the correct website link based on the margaNumber
+        const margaIndex = Number(margaNumber.margaNumber) - 1;
+        const website = chakraPages[margaIndex];
+        // if (!website) {
+        //     console.error('Error: Invalid marga number index:', margaIndex);
+        //     return res.status(500).json({ error: 'Invalid Marga number for website link' });
+        // }
+
+        // Prepare update parameters
+        const updateParams = {
+            fields: {
+                marganumber: margaNumber?.margaNumber,
+                rulechakra: margaChakra,
+
+                first_chakra: margaNumber?.roots[0],
+                chakra_title_0_27: chakraInfo[0]?.title,
+                chakra_description_0_27: chakraInfo[0]?.description,
+                chakra_image_0_27: chakraInfo[0]?.image,
+
+                second_chakra: margaNumber?.roots[1],
+                chakra_title_27_54: chakraInfo[1]?.title,
+                chakra_description_27_54: chakraInfo[1]?.description,
+                chakra_image_27_54: chakraInfo[1]?.image,
+
+                third_chakra: margaNumber?.roots[2],
+                chakra_title_54_81: chakraInfo[2]?.title,
+                chakra_description_54_81: chakraInfo[2]?.description,
+                chakra_image_54_81: chakraInfo[2]?.image,
+
+                email1_landing_link: website
+            },
+            status: "active"
+        };
+
+        // Construct email2_landing_link URL
+        const email2LandingLinkp = `https://chakracycles.github.io/Chakra_Landing_Page/?` +
+            `&first_chakra=${encodeURIComponent(updateParams.fields.first_chakra)}` +
+            `&chakra_title_0_27=${encodeURIComponent(updateParams.fields.chakra_title_0_27)}` +
+            `&chakra_description_0_27=${encodeURIComponent(updateParams.fields.chakra_description_0_27)}` +
+            `&chakra_image_0_27=${encodeURIComponent(updateParams.fields.chakra_image_0_27)}` +
+            `&marganumber=${encodeURIComponent(updateParams.fields.marganumber)}`;
+
+        const email2LandingLinkptwo =
+            `&second_chakra=${encodeURIComponent(updateParams.fields.second_chakra)}` +
+            `&chakra_title_27_54=${encodeURIComponent(updateParams.fields.chakra_title_27_54)}` +
+            `&chakra_description_27_54=${encodeURIComponent(updateParams.fields.chakra_description_27_54)}` +
+            `&chakra_image_27_54=${encodeURIComponent(updateParams.fields.chakra_image_27_54)}` +
+            `&rulechakra=${encodeURIComponent(updateParams.fields.rulechakra)}`
+
+        const email2LandingLinkpthree =
+            `&third_chakra=${encodeURIComponent(updateParams.fields.third_chakra)}` +
+            `&chakra_title_54_81=${encodeURIComponent(updateParams.fields.chakra_title_54_81)}` +
+            `&chakra_description_54_81=${encodeURIComponent(updateParams.fields.chakra_description_54_81)}` +
+            `&chakra_image_54_81=${encodeURIComponent(updateParams.fields.chakra_image_54_81)}` +
+            `&name=${encodeURIComponent(name)}`;
+
+        // Add the email2_landing_link to updateParams
+        updateParams.fields.email2_landing_linkp1 = email2LandingLinkp;
+        updateParams.fields.email2_landing_linkp2 = email2LandingLinkptwo;
+        updateParams.fields.email2_landing_linkp3 = email2LandingLinkpthree;
+
+        // Update subscriber using their ID
+        const updateResponse = await mailerlite.subscribers.update(target_subscriber.id, updateParams);
+
+        // if (!updateResponse || !updateResponse.data || !updateResponse.data.data) {
+        //     console.error('Error: Failed to update subscriber:', updateResponse);
+        //     return res.status(500).json({ error: 'Failed to update subscriber' });
+        // }
+
+        const updatedData = {
+            id: updateResponse.data.data.id,
+            email: updateResponse.data.data.email,
+            status: updateResponse.data.data.status,
+            fields: updateResponse.data.data.fields
+        };
+
+        console.log('Subscriber updated:', updatedData);
+
+
+
     }
+    // Send back the result and subscriber data
+    return res.json({ message: "API executed successfully!" });
+} catch (error) {
+    console.error('Error processing data or updating subscriber:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+}
 });
 
 
