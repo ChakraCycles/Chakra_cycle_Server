@@ -187,11 +187,21 @@ app.post('/add-subscriber', async (req, res) => {
         unsubscribed_at: '' // Set if needed
     };
 
-
-    mailerlite.subscribers.createOrUpdate(subscriberData)
+    mailerlite.subscribers?.createOrUpdate(subscriberData)
         .then(response => {
             console.log("Subscriber created through custom HTML form", response?.data);
         })
+        .catch(err => {
+        console.error("Error creating or updating subscriber:", err.message);
+
+        if (err.response) {
+            console.error(`Status: ${err.response.status}, Data:`, err.response.data);
+        } else if (err.request) {
+            console.error("No response received:", err.request);
+        } else {
+            console.error("Unexpected error:", err);
+        }
+    });
 
     res.redirect('https://thechakracycles.com/success');
 })
