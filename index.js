@@ -167,23 +167,7 @@ const formatDate = (date) => {
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
 };
 
-app.post('/add-subscriber', async (req, res) => {
-    console.log("coming data", req.body);
-    const { first_name, email, date_of_birth } = req?.body
-
-    // Get additional request details
-    const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    const userAgent = req.headers['user-agent'];
-    const referer = req.headers['referer']; // The page where the request originated
-    const origin = req.headers['origin']; // The domain where the form is hosted
-
-    // Log details
-    console.log("Incoming Data:", { first_name, email, date_of_birth });
-    console.log("Client IP:", clientIp);
-    console.log("User-Agent:", userAgent);
-    console.log("Referer (Page URL):", referer);
-    console.log("Origin (Domain):", origin);
-
+function sendMailtoMiler(email, first_name, date_of_birth) {
     const subscriberData = {
         email: email,
         fields: {
@@ -193,11 +177,11 @@ app.post('/add-subscriber', async (req, res) => {
         },
         groups: ['126813082419726124'],
         status: 'active',
-        subscribed_at: formatDate(new Date()), // Properly formatted timestamp
-        ip_address: '', // Set if available
-        opted_in_at: '', // Set if needed
-        optin_ip: '', // Set if needed
-        unsubscribed_at: '' // Set if needed
+        subscribed_at: formatDate(new Date()),
+        ip_address: '',
+        opted_in_at: '',
+        optin_ip: '',
+        unsubscribed_at: ''
     };
 
     mailerlite.subscribers?.createOrUpdate(subscriberData)
@@ -205,18 +189,37 @@ app.post('/add-subscriber', async (req, res) => {
             console.log("Subscriber created through custom HTML form", response?.data);
         })
         .catch(err => {
-        console.error("Error creating or updating subscriber:", err.message);
+            console.error("Error creating or updating subscriber:", err.message);
 
-        if (err.response) {
-            console.error(`Status: ${err.response.status}, Data:`, err.response.data);
-        } else if (err.request) {
-            console.error("No response received:", err.request);
-        } else {
-            console.error("Unexpected error:", err);
+            if (err.response) {
+                console.error(`Status: ${err.response.status}, Data:`, err.response.data);
+            } else if (err.request) {
+                console.error("No response received:", err.request);
+            } else {
+                console.error("Unexpected error:", err);
+            }
+        });
+}
+
+
+app.post('/add-subscriber', async (req, res) => {
+    console.log("coming data", req.body);
+    const { first_name, email, date_of_birth, recaptcha_token } = req?.body
+    try {
+        const secretKey = "6LeFgK4qAAAAAImG7sAnrE_vMN_VIS9-0PwenFjZ";
+        const verificationUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptcha_token}`;
+        console.log('verificationUrl:', verificationUrl)
+        const { data } = await axios.post(verificationUrl);
+        console.log('data', data)
+
+        if (data.success || data.score >= 0.5) {
+            sendMailtoMiler(email, first_name, date_of_birth)
         }
-    });
-
-    res.redirect('https://thechakracycles.com/success');
+        console.log("Verified successfully:", { first_name, email, date_of_birth });
+    } catch (error) {
+        console.error("reCAPTCHA verification error:", error);
+    }
+    res.redirect('https://thechakracycles.com/success')
 })
 
 
@@ -224,6 +227,18 @@ app.post('/process-email-data', async (req, res) => {
     const events = req?.body?.events;
 
     console.log("incoming body =", JSON.stringify(req?.body));
+
+    // Get additional request details
+    const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    const userAgent = req.headers['user-agent'];
+    const referer = req.headers['referer']; // The page where the request originated
+    const origin = req.headers['origin']; // The domain where the form is hosted
+
+    // Log details
+    console.log("Client IP:", clientIp);
+    console.log("User-Agent:", userAgent);
+    console.log("Referer (Page URL):", referer);
+    console.log("Origin (Domain):", origin);
 
     let name, email, dob;
 
@@ -392,8 +407,6 @@ try {
 }
 });
 
-
-
 app.post('/property-feasibility', async (req, res) => {
     var link;
 
@@ -476,13 +489,6 @@ const formDataSchema = new mongoose.Schema({
 // Create a model
 const FormData = mongoose.model('ReverseFormData', formDataSchema);
 
-
-
-
-
-
-
-
 // Route to handle form submission
 app.post('/reverseinputs', async (req, res) => {
     // Connect to the database
@@ -521,8 +527,6 @@ app.post('/reverseinputs', async (req, res) => {
         res.status(500).send('Error saving data.');
     }
 });
-
-
 
 // Start the server
 var port = 1337;
