@@ -208,9 +208,7 @@ app.post('/add-subscriber', async (req, res) => {
     try {
         const secretKey = "6LeFgK4qAAAAAImG7sAnrE_vMN_VIS9-0PwenFjZ";
         const verificationUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptcha_token}`;
-        console.log('verificationUrl:', verificationUrl)
         const { data } = await axios.post(verificationUrl);
-        console.log('data', data)
 
         if (data.success || data.score >= 0.5) {
             sendMailtoMiler(email, first_name, date_of_birth)
@@ -228,18 +226,6 @@ app.post('/process-email-data', async (req, res) => {
 
     console.log("incoming body =", JSON.stringify(req?.body));
 
-    // Get additional request details
-    const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    const userAgent = req.headers['user-agent'];
-    const referer = req.headers['referer']; // The page where the request originated
-    const origin = req.headers['origin']; // The domain where the form is hosted
-
-    // Log details
-    console.log("Client IP:", clientIp);
-    console.log("User-Agent:", userAgent);
-    console.log("Referer (Page URL):", referer);
-    console.log("Origin (Domain):", origin);
-
     let name, email, dob;
 
     // Iterate over each event in the events array
@@ -256,12 +242,14 @@ app.post('/process-email-data', async (req, res) => {
     
     });
 
-// // Check if the required variables are defined
-if (!email || !dob) {
-    // console.log("")
-    console.error("Missing email or date of birth")
-    return res.status(400).json({ error: 'Missing email or date of birth' });
-}
+    if (!email) {
+        console.error("Missing email!")
+        return res.status(400).json({ error: 'Missing email!' });
+    }
+    if (!dob) {
+        console.error("Missing date of birth!")
+        return res.status(400).json({ error: 'Missing date of birth!' });
+    }
 
 const chakraPages = [
     'https://reading.thechakracycles.com/muladhara',
