@@ -170,6 +170,17 @@ const formatDate = (date) => {
 app.post('/add-subscriber', async (req, res) => {
     console.log("coming data", req.body);
     const { first_name, email, date_of_birth } = req?.body
+// Get IP address of the client
+    const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+
+    // Get User-Agent
+    const userAgent = req.headers['user-agent'];
+
+    // Log details for debugging
+    console.log("Incoming Data:", req.body);
+    console.log("Client IP:", clientIp);
+    console.log("User-Agent:", userAgent);
+    console.debug("-----------------");
 
     const subscriberData = {
         email: email,
