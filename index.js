@@ -230,16 +230,19 @@ app.post('/process-email-data', async (req, res) => {
 
     // Iterate over each event in the events array
     events.forEach(event => {
-        if (event?.fields) {
+        if (!!event?.subscriber) {
+            name = event.subscriber.fields?.first_name || "user";
+            dob = event.subscriber.fields?.date_of_birth;
+            email = event.subscriber.email || "";
+        } else if (event?.fields) {
             name = event?.fields?.first_name || "user";
-            email = event?.email || ""; // Email is directly in event
+            email = event?.email || "";
             dob = event?.fields?.date_of_birth;
         } else {
             name = event?.first_name || "user";
-            email = event?.email || ""; // Email is directly in event
+            email = event?.email || "";
             dob = event?.date_of_birth;
         }
-    
     });
 
     if (!email) {
