@@ -206,7 +206,7 @@ app.post('/add-subscriber', async (req, res) => {
     console.log("coming data", req.body);
     const { first_name, email, date_of_birth, recaptcha_token } = req?.body
     try {
-        const secretKey = "6LeFgK4qAAAAAImG7sAnrE_vMN_VIS9-0PwenFjZ";
+        const secretKey = "6LdUvNAqAAAAADEr6Bh5vUWuQE-CsT_TnaakvI01";
         const verificationUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptcha_token}`;
         const { data } = await axios.post(verificationUrl);
 
