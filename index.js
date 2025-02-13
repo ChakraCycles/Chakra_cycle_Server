@@ -255,15 +255,15 @@ app.post('/process-email-data', async (req, res) => {
     }
 
 const chakraPages = [
-    'https://reading.thechakracycles.com/muladhara',
-    'https://reading.thechakracycles.com/Swadhistana',
-    'https://reading.thechakracycles.com/Manipura',
-    'https://reading.thechakracycles.com/Anahata',
-    'https://reading.thechakracycles.com/Vishuddha',
-    'https://reading.thechakracycles.com/Anja',
-    'https://reading.thechakracycles.com/Sahasrara',
-    'https://reading.thechakracycles.com/Narayanana',
-    'https://reading.thechakracycles.com/Brahmananda'
+    'https://reading.chakra-cycles.com/muladhara',
+    'https://reading.chakra-cycles.com/Swadhistana',
+    'https://reading.chakra-cycles.com/Manipura',
+    'https://reading.chakra-cycles.com/Anahata',
+    'https://reading.chakra-cycles.com/Vishuddha',
+    'https://reading.chakra-cycles.com/Anja',
+    'https://reading.chakra-cycles.com/Sahasrara',
+    'https://reading.chakra-cycles.com/Narayanana',
+    'https://reading.chakra-cycles.com/Brahmananda'
 ];
 
 try {
