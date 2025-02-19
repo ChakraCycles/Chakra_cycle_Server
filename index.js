@@ -222,7 +222,7 @@ app.post('/add-subscriber', async (req, res) => {
 
 
 app.post('/process-email-data', async (req, res) => {
-    const event = req?.body;
+    const event = req?.body.events?.[0] || req?.body;
 
     console.log("incoming Event =", JSON.stringify(req?.body));
 
