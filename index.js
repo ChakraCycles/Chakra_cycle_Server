@@ -222,28 +222,27 @@ app.post('/add-subscriber', async (req, res) => {
 
 
 app.post('/process-email-data', async (req, res) => {
-    const events = req?.body?.events;
+    const event = req?.body;
 
-    console.log("incoming body =", JSON.stringify(req?.body));
+    console.log("incoming Event =", JSON.stringify(req?.body));
 
     let name, email, dob;
 
     // Iterate over each event in the events array
-    events.forEach(event => {
-        if (!!event?.subscriber) {
-            name = event.subscriber.fields?.first_name || "user";
-            dob = event.subscriber.fields?.date_of_birth;
-            email = event.subscriber.email || "";
-        } else if (event?.fields) {
-            name = event?.fields?.first_name || "user";
-            email = event?.email || "";
-            dob = event?.fields?.date_of_birth;
-        } else {
-            name = event?.first_name || "user";
-            email = event?.email || "";
-            dob = event?.date_of_birth;
-        }
-    });
+
+    if (!!event?.subscriber) {
+        name = event.subscriber.fields?.first_name || "user";
+        dob = event.subscriber.fields?.date_of_birth;
+        email = event.subscriber.email || "";
+    } else if (event?.fields) {
+        name = event?.fields?.first_name || "user";
+        email = event?.email || "";
+        dob = event?.fields?.date_of_birth;
+    } else {
+        name = event?.first_name || "user";
+        email = event?.email || "";
+        dob = event?.date_of_birth;
+    }
 
     if (!email) {
         console.error("Missing email!")
