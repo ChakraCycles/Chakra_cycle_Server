@@ -303,7 +303,7 @@ try {
 
         // Find the subscriber with the given email
         const target_subscriber = allSubscribers.find(sub => sub?.email === email);
-
+        console.log("target_subscriber", target_subscriber )
         if (!target_subscriber) {
             return res.status(404).json({ error: 'Subscriber not found' });
         }
