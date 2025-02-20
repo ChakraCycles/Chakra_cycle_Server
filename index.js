@@ -246,11 +246,11 @@ app.post('/process-email-data', async (req, res) => {
 
     if (!email) {
         console.error("Missing email!")
-        return res.status(400).json({ error: 'Missing email!' });
+        return res.status(200).json({ error: 'Missing email!' });
     }
     if (!dob) {
         console.error("Missing date of birth!")
-        return res.status(400).json({ error: 'Missing date of birth!' });
+        return res.status(200).json({ error: 'Missing date of birth!' });
     }
 
 const chakraPages = [
@@ -271,7 +271,7 @@ try {
 
     if (!margaNumber || !margaNumber?.margaNumber) {
         console.error('Error: margaNumber is undefined or invalid:', margaNumber);
-        return res.status(500).json({ error: 'Failed to calculate marga number' });
+        return res.status(200).json({ error: 'Failed to calculate marga number' });
     }
 
     // Get chakra info
@@ -281,7 +281,7 @@ try {
         const margaChakra = margaNumberChakra(margaNumber?.margaNumber);
         if (!chakraInfo || !Array.isArray(chakraInfo) || chakraInfo.length < 3) {
             console.error('Error: chakraInfo is invalid:', chakraInfo);
-            return res.status(500).json({ error: 'Failed to get chakra information' });
+            return res.status(200).json({ error: 'Failed to get chakra information' });
         }
 
         const params = {
@@ -298,14 +298,15 @@ try {
         // // Check if API response is valid
         if (!allSubscribers || !Array.isArray(allSubscribers)) {
             console.error('Error: Invalid MailerLite response:', response);
-            return res.status(500).json({ error: 'Failed to fetch subscribers' });
+            return res.status(200).json({ error: 'Failed to fetch subscribers' });
         }
 
         // Find the subscriber with the given email
         const target_subscriber = allSubscribers.find(sub => sub?.email === email);
         console.log("target_subscriber", target_subscriber )
+        console.log("error", "target_subscriber" )
         if (!target_subscriber) {
-            return res.status(404).json({ error: 'Subscriber not found' });
+            return res.status(200).json({ error: 'Subscriber not found' });
         }
 
         // Select the correct website link based on the margaNumber
@@ -313,7 +314,7 @@ try {
         const website = chakraPages[margaIndex];
         if (!website) {
             console.error('Error: Invalid marga number index:', margaIndex);
-            return res.status(500).json({ error: 'Invalid Marga number for website link' });
+            return res.status(200).json({ error: 'Invalid Marga number for website link' });
         }
 
         // Prepare update parameters
@@ -374,7 +375,7 @@ try {
 
         if (!updateResponse || !updateResponse.data || !updateResponse.data.data) {
             console.error('Error: Failed to update subscriber:', updateResponse);
-            return res.status(500).json({ error: 'Failed to update subscriber' });
+            return res.status(200).json({ error: 'Failed to update subscriber' });
         }
 
         const updatedData = {
@@ -385,8 +386,6 @@ try {
         };
 
         console.log('Subscriber updated:', updatedData);
-
-
 
     }
     // Send back the result and subscriber data
